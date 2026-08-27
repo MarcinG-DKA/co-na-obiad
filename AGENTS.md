@@ -5,6 +5,7 @@ Co na obiad? is a household recipe app (inventory-first matching, Supabase auth,
 ## Hard Rules
 
 - Never expose `SUPABASE_URL` / `SUPABASE_KEY` to the client — server-only via `astro:env` (see `@astro.config.mjs`, `@src/lib/supabase.ts`).
+- Do not commit `.env`, `.dev.vars`, or credentials.
 - New Supabase tables: migration in `supabase/migrations/` as `YYYYMMDDHHmmss_short_description.sql`, RLS enabled with per-role policies.
 - API routes under `src/pages/api/` must export `const prerender = false` (full SSR — `@astro.config.mjs`).
 - Merge Tailwind classes with `cn()` from `@src/lib/utils`; do not concatenate class strings.
@@ -14,26 +15,20 @@ Co na obiad? is a household recipe app (inventory-first matching, Supabase auth,
 
 ## Project Structure
 
-- `src/pages/` — Astro routes; `src/pages/api/` — HTTP handlers (`GET`/`POST` exports, Zod-validated input).
-- `src/components/` — UI; interactive pieces in React, static in Astro; shadcn/ui in `src/components/ui/` (`npx shadcn@latest add [name]`).
-- `src/lib/` — Supabase client, helpers, services; shared types in `src/types.ts`.
-- `src/middleware.ts` — auth gate for routes in `PROTECTED_ROUTES`.
-- `context/foundation/` — PRD and planning artifacts (product source of truth).
-- Path alias `@/*` → `./src/*` (`@tsconfig.json`).
+- `src/pages/` — Astro routes and API handlers.
+- `src/components/` — UI (Astro + React).
+- `src/lib/` — Supabase client, helpers, services.
+- `context/foundation/` — PRD and planning artifacts.
+
+Auth flow, path alias, shadcn, and middleware details: `@CLAUDE.md`.
 
 ## Build, Test, and Development Commands
 
-- `npm run dev` — local dev (Cloudflare workerd runtime).
-- `npm run build` — production SSR build (requires Supabase env vars).
-- `npm run lint` / `npm run lint:fix` — ESLint (`@eslint.config.js`).
-- `npm run format` — Prettier; `npm run preview` — production preview.
-- Node **v22.14.0** (`.nvmrc`); copy `@.env.example` → `.env` or `.dev.vars`.
-
-Pre-commit: husky + lint-staged (`@package.json`).
+Run scripts from `@package.json` (`dev`, `build`, `lint`, `lint:fix`, `format`, `preview`). Node **v22.14.0** (`.nvmrc`). Copy `@.env.example` → `.env` or `.dev.vars`. Run `npm run lint` before pushing. Pre-commit: husky + lint-staged (`@package.json`).
 
 ## Coding Style
 
-TypeScript throughout. ESLint + Prettier enforce style — run `npm run lint` before pushing. API handlers validate with Zod. Extract React hooks to `src/components/hooks/`. Follow existing auth patterns in `@src/pages/api/auth/signin.ts` and `@src/components/auth/SignInForm.tsx`.
+API handlers validate with Zod. Extract React hooks to `src/components/hooks/`. Follow existing auth patterns in `@src/pages/api/auth/signin.ts` and `@src/components/auth/SignInForm.tsx`. Lint/format rules: `@eslint.config.js`.
 
 ## Testing
 
@@ -45,4 +40,4 @@ Conventional Commits prefixes (`chore:`, etc.). PRs target `master`; CI runs lin
 
 ## Security and Configuration
 
-Local Supabase: `npx supabase start` (Docker). Deploy: `npx wrangler deploy`. Do not commit `.env`, `.dev.vars`, or credentials. Review `npm audit` findings from bootstrap before production deploy (`@context/changes/bootstrap-verification/verification.md`).
+Local Supabase: `npx supabase start` (Docker). Deploy: `npx wrangler deploy`. Review `npm audit` findings before production deploy (`@context/changes/bootstrap-verification/verification.md`).
