@@ -69,6 +69,12 @@ Deferred to v2: shopping list generation, ingredient substitution suggestions.
 - **When** the user views recipe matches
 - **Then** the product shows a reminder that matches may be inaccurate and offers a path to review pantry contents
 
+### US-04: Recipes edit
+
+- **Given** a logged-in user on the household page with pantry items and saved recipes
+- **When** the user edits existing recipe or add new one
+- **Then** the matching-recipes list updates to reflect the new or edited recipe
+
 ## Functional Requirements
 
 - FR-001: User can log in. Priority: must-have
