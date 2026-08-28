@@ -6,8 +6,6 @@ Based on `context/foundation/infrastructure.md`, the project is already bootstra
 
 ---
 
-
-
 ## Phase 0: Prerequisites
 
 **Goal:** Ensure the local development environment and external services are ready before deploying.
@@ -20,8 +18,6 @@ Based on `context/foundation/infrastructure.md`, the project is already bootstra
   nvm use
   ```
 - [x] Verify: `node -v` should print `v22.14.0`
-
-
 
 ### 0.2 Wrangler CLI (Cloudflare)
 
@@ -63,8 +59,6 @@ The Supabase CLI is already in `devDependencies` (`"supabase": "^2.115.0"`). It'
   - **Studio URL:** `http://127.0.0.1:54323`
   - **anon key** and **service_role key**
 
-
-
 ### 0.4 Local Environment Variables
 
 The app needs two env files for local development:
@@ -102,15 +96,11 @@ For deployment, you need a hosted Supabase project:
   npx supabase db push
   ```
 
-
-
 ### 0.6 Cloudflare Account
 
 - [x] Sign up or sign in at [dash.cloudflare.com](https://dash.cloudflare.com)
 - [x] Note your **Account ID** (shown in the right sidebar of any Workers & Pages page)
 - [x] The free tier (100k requests/day) covers MVP scale at $0
-
-
 
 ### 0.7 Verify Local Dev Works
 
@@ -122,8 +112,6 @@ For deployment, you need a hosted Supabase project:
 - [x] Verify auth works: navigate to `/auth/signin` and attempt a login against local Supabase.
 
 ---
-
-
 
 ## Phase 1: Wrangler Configuration
 
@@ -139,8 +127,6 @@ For deployment, you need a hosted Supabase project:
 
 ---
 
-
-
 ## Phase 2: Package & Script Updates
 
 **Goal:** Align `package.json` with the production project name and add convenience scripts for local/manual deploys.
@@ -151,8 +137,6 @@ For deployment, you need a hosted Supabase project:
 - [x] Add `"tail": "npx wrangler tail --format json"` script for live log streaming
 
 ---
-
-
 
 ## Phase 3: Cloudflare Workers Builds — Auto-Deploy on Push
 
@@ -171,20 +155,20 @@ For non-production branches (PRs), it runs `npx wrangler versions upload` — cr
 ### Setup Steps (Dashboard — one-time manual action)
 
 - [x] Create a Worker named `co-na-obiad` in the Cloudflare dashboard (Workers & Pages > Create)
-- [ ] Go to the Worker's **Settings > Builds > Connect** and link the GitHub repository
-- [ ] Configure build settings:
+- [x] Go to the Worker's **Settings > Builds > Connect** and link the GitHub repository
+- [x] Configure build settings:
   - **Production branch:** `master`
   - **Build command:** `npm run build`
   - **Deploy command:** `npx wrangler deploy`
   - **Root directory:** `/` (default, since `package.json` is at repo root)
-- [ ] Set **build variables and secrets** (Settings > Build > Build Variables and Secrets):
+- [x] Set **build variables and secrets** (Settings > Build > Build Variables and Secrets):
   - `SUPABASE_URL` (secret) — needed at build time for `astro:env` validation
   - `SUPABASE_KEY` (secret) — needed at build time for `astro:env` validation
   - `NODE_VERSION` = `22` (variable) — or rely on `.nvmrc` which already contains `22.14.0`
-- [ ] Enable **non-production branch builds** for PR preview deploys (optional but recommended)
-- [ ] Verify the first push triggers a successful build in the Builds tab
 
+- [~] Enable **non-production branch builds** for PR preview deploys (skipped — not needed for MVP)
 
+- [x] Verify the first push triggers a successful build in the Builds tab
 
 ### Important Constraints
 
@@ -193,15 +177,11 @@ For non-production branches (PRs), it runs `npx wrangler versions upload` — cr
 - Cloudflare's build image auto-detects Node version from `.nvmrc`. The project already has `.nvmrc` with `22.14.0`.
 - Builds are serialized per Worker — no concurrent deploy race conditions (unlike GHA which needs explicit `concurrency` groups).
 
-
-
 ### What stays in GHA
 
 The existing `.github/workflows/ci.yml` continues to run lint+build as a quality gate on PRs. It does **not** deploy. This gives fast PR feedback without duplicating the deploy step.
 
 ---
-
-
 
 ## Phase 4: Secrets Management
 
@@ -209,12 +189,10 @@ The existing `.github/workflows/ci.yml` continues to run lint+build as a quality
 
 ### Build-time secrets (Cloudflare Workers Builds dashboard)
 
-- [ ] Add `SUPABASE_URL` as a build secret (Settings > Build > Build Variables and Secrets, `is_secret: true`)
-- [ ] Add `SUPABASE_KEY` as a build secret (Settings > Build > Build Variables and Secrets, `is_secret: true`)
+- [x] Add `SUPABASE_URL` as a build secret (Settings > Build > Build Variables and Secrets, `is_secret: true`)
+- [x] Add `SUPABASE_KEY` as a build secret (Settings > Build > Build Variables and Secrets, `is_secret: true`)
 
 Note: The Builds API requires a separately-scoped API token ("Workers Builds: Edit") which the standard wrangler OAuth flow does not include. These must be set via the dashboard.
-
-
 
 ### Runtime secrets (Worker environment)
 
@@ -222,8 +200,6 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
   - `npx wrangler secret put SUPABASE_URL`
   - `npx wrangler secret put SUPABASE_KEY`
 - [ ] Alternatively, set via dashboard: Worker > Settings > Variables & Secrets > Add (type: Secret)
-
-
 
 ### Verification
 
@@ -233,8 +209,6 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
 **Edge case — build vs. runtime secrets:** These are distinct in Cloudflare. Build secrets are available only during the build step on Cloudflare's build VM. Runtime secrets are injected into the Worker at request time. Both must be set for the app to function correctly.
 
 ---
-
-
 
 ## Phase 5: Custom Domain Preparation
 
@@ -257,8 +231,6 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
 
 ---
 
-
-
 ## Phase 6: Supabase Auth Hardening for Workers Runtime
 
 **Goal:** Address known edge cases with `@supabase/ssr` on Cloudflare Workers.
@@ -270,20 +242,60 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
 
 ---
 
-
-
 ## Phase 7: Rollback & Observability Documentation
 
 **Goal:** Ensure the team knows how to recover from bad deploys and debug issues.
 
-- [ ] Document rollback procedure: `npx wrangler versions list` then `npx wrangler rollback [VERSION_ID]`
-- [ ] Document live log access: `npx wrangler tail --format json`
-- [ ] Note limitation: free tier has no persistent log storage — only live streaming via `wrangler tail`
-- [ ] Document: in Workers Builds, to disable auto-deploy while still building, change deploy command to `npx wrangler versions upload` (creates versions without promoting)
+- [x] Document rollback procedure: `npx wrangler versions list` then `npx wrangler rollback [VERSION_ID]`
+- [x] Document live log access: `npx wrangler tail --format json`
+- [x] Note limitation: free tier has no persistent log storage — only live streaming via `wrangler tail`
+- [x] Document: in Workers Builds, to disable auto-deploy while still building, change deploy command to `npx wrangler versions upload` (creates versions without promoting)
+
+### Operations Runbook
+
+**Live logs (streaming only, free tier):**
+
+```bash
+npm run tail
+# or with filters:
+npx wrangler tail --format json --status error
+npx wrangler tail --format json --search "GET /dashboard"
+```
+
+**List deployed versions:**
+
+```bash
+npx wrangler versions list
+```
+
+**Rollback to a previous version:**
+
+```bash
+npx wrangler versions list          # find the VERSION_ID to revert to
+npx wrangler rollback <VERSION_ID>  # instant, 100% traffic shift (no canary on free tier)
+```
+
+**Pause auto-deploy (builds still run, but don't promote):**
+Change the deploy command in Cloudflare dashboard (Settings > Build) from:
+
+- `npx wrangler deploy` to `npx wrangler versions upload`
+
+This creates versions without promoting them. To resume auto-deploy, change it back.
+
+**Manual deploy from local machine:**
+
+```bash
+npm run deploy           # builds + deploys to production
+npm run deploy:preview   # uploads version without promoting (for testing)
+```
+
+**Free tier limitations:**
+
+- `wrangler tail` streams live only — no persistent log storage
+- Logs are lost once the tail session ends
+- For post-hoc debugging, upgrade to paid plan and set up Logpush to R2
 
 ---
-
-
 
 ## Edge Cases and Risk Mitigations Summary
 
@@ -301,8 +313,6 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
 
 
 ---
-
-
 
 ## Cloudflare Dashboard Secrets Checklist
 
@@ -327,8 +337,6 @@ Before the first deploy, configure in the Cloudflare dashboard:
 No `CLOUDFLARE_API_TOKEN` or `CLOUDFLARE_ACCOUNT_ID` needed in GitHub — Cloudflare Builds handles auth via its own GitHub App installation.
 
 ---
-
-
 
 ## Out of Scope
 
