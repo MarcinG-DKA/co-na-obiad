@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase";
 const PROTECTED_ROUTES = ["/dashboard"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const supabase = createClient(context.request.headers, context.cookies);
+  const responseHeaders = new Headers();
+  const supabase = createClient(context.request.headers, context.cookies, responseHeaders);
 
   if (supabase) {
     const {
@@ -21,5 +22,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  return next();
+  const response = await next();
+
+  responseHeaders.forEach((value, key) => {
+    response.headers.set(key, value);
+  });
+
+  return response;
 });

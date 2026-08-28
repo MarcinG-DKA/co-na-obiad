@@ -1,6 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "10x-astro-starter",
+  "name": "co-na-obiad",
+  // Set your Cloudflare Account ID here or via CLOUDFLARE_ACCOUNT_ID env var.
+  // Find it in the Cloudflare dashboard sidebar under Workers & Pages.
+  // "account_id": "",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-05-08",
   "compatibility_flags": ["nodejs_compat"],
@@ -12,4 +15,13 @@
   "observability": {
     "enabled": true,
   },
+  // Custom domain routing — uncomment after adding your domain to Cloudflare as a zone.
+  // Wrangler will create DNS records and provision TLS automatically on deploy.
+  // See: https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+  // "routes": [{ "pattern": "conaobiad.example.com", "custom_domain": true }],
+
+  // Multi-environment deploys (staging, etc.):
+  // With @astrojs/cloudflare v13+, `wrangler deploy --env` is NOT supported.
+  // Instead, build per environment: CLOUDFLARE_ENV=staging npm run build && npx wrangler deploy
+  // See: https://github.com/withastro/astro/issues/16040
 }

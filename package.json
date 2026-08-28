@@ -1,11 +1,14 @@
 {
-  "name": "10x-astro-starter",
+  "name": "co-na-obiad",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "npm run build && npx wrangler deploy",
+    "deploy:preview": "npx wrangler versions upload",
+    "tail": "npx wrangler tail --format json",
     "astro": "astro",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
