@@ -248,30 +248,30 @@ Household lists are tiny (PRD: small user scale). Middleware does one membership
 
 #### Automated
 
-- [x] 1.1 Migration file exists under supabase/migrations/ with the AGENTS.md name shape
-- [x] 1.2 npx supabase db reset (or db push) applies without error when Supabase is running
-- [x] 1.3 src/db/database.types.ts contains households, household_members, and join_household
-- [x] 1.4 npm run lint passes
-- [x] 1.5 npm run build passes
+- [x] 1.1 Migration file exists under supabase/migrations/ with the AGENTS.md name shape — 3888bff
+- [x] 1.2 npx supabase db reset (or db push) applies without error when Supabase is running — 3888bff
+- [x] 1.3 src/db/database.types.ts contains households, household_members, and join_household — 3888bff
+- [x] 1.4 npm run lint passes — 3888bff
+- [x] 1.5 npm run build passes — 3888bff
 
 #### Manual
 
-- [x] 1.6 New Auth user has exactly one household and one membership
-- [x] 1.7 Pre-existing Auth user is backfilled with a household
-- [x] 1.8 join_household rejects bogus codes and accepts a valid code for a second user
+- [x] 1.6 New Auth user has exactly one household and one membership — 3888bff
+- [x] 1.7 Pre-existing Auth user is backfilled with a household — 3888bff
+- [x] 1.8 join_household rejects bogus codes and accepts a valid code for a second user — 3888bff
 
 ### Phase 2: Current-household cookie and helpers
 
 #### Automated
 
-- [ ] 2.1 npm run lint passes
-- [ ] 2.2 npm run build passes
-- [ ] 2.3 Astro.locals.householdId typechecks on a page
+- [x] 2.1 npm run lint passes
+- [x] 2.2 npm run build passes
+- [x] 2.3 Astro.locals.householdId typechecks on a page
 
 #### Manual
 
-- [ ] 2.4 Sign-in sets current_household_id to the user's household
-- [ ] 2.5 Tampered cookie is ignored and reset to a real membership
+- [x] 2.4 Sign-in sets current_household_id to the user's household
+- [x] 2.5 Tampered cookie is ignored and reset to a real membership
 
 ### Phase 3: Invite code join flow
 

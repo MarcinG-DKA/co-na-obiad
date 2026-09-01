@@ -1,12 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-const { user } = Astro.locals;
+const { user, householdId } = Astro.locals;
 ---
 
 <Layout title="Dashboard">
   <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
+    <div
+      class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
+      data-household-id={householdId ?? ""}
+    >
       <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
         Dashboard
       </h1>
