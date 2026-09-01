@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<Layout title="Join household">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
+      >
+        Join a household
+      </h1>
+      {
+        error && (
+          <p class="mb-4 text-center text-sm text-red-300" role="alert">
+            {error}
+          </p>
+        )
+      }
+      <form method="POST" action="/api/households/join" class="space-y-4">
+        <label class="block text-sm text-blue-100/80">
+          Invite code
+          <input
+            type="text"
+            name="code"
+            required
+            autocomplete="off"
+            class="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-blue-100/40"
+          />
+        </label>
+        <button
+          type="submit"
+          class="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+        >
+          Join
+        </button>
+      </form>
+      <p class="mt-4 text-center text-sm text-blue-100/60">
+        <a href="/dashboard" class="text-purple-300 hover:underline">Back to dashboard</a>
+      </p>
+    </div>
+  </div>
+</Layout>

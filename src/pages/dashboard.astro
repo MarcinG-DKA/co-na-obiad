@@ -1,7 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
 
 const { user, householdId } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let inviteCode: string | null = null;
+if (supabase && householdId) {
+  const { data } = await supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle();
+  inviteCode = data?.invite_code ?? null;
+}
 ---
 
 <Layout title="Dashboard">
@@ -16,7 +24,18 @@ const { user, householdId } = Astro.locals;
       <p class="text-blue-100/80">
         Welcome, <span class="font-semibold text-white">{user?.email}</span>
       </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
+      {
+        inviteCode ? (
+          <p class="mt-4 text-sm text-blue-100/80">
+            Invite code: <code class="font-mono break-all text-white">{inviteCode}</code>
+          </p>
+        ) : (
+          <p class="mt-4 text-sm text-blue-100/50">No household</p>
+        )
+      }
+      <p class="mt-2 text-sm text-blue-100/60">
+        <a href="/join" class="text-purple-300 hover:underline">Join another household</a>
+      </p>
       <form method="POST" action="/api/auth/signout" class="mt-6">
         <button
           type="submit"

@@ -264,26 +264,26 @@ Household lists are tiny (PRD: small user scale). Middleware does one membership
 
 #### Automated
 
-- [x] 2.1 npm run lint passes
-- [x] 2.2 npm run build passes
-- [x] 2.3 Astro.locals.householdId typechecks on a page
+- [x] 2.1 npm run lint passes — 24142c4
+- [x] 2.2 npm run build passes — 24142c4
+- [x] 2.3 Astro.locals.householdId typechecks on a page — 24142c4
 
 #### Manual
 
-- [x] 2.4 Sign-in sets current_household_id to the user's household
-- [x] 2.5 Tampered cookie is ignored and reset to a real membership
+- [x] 2.4 Sign-in sets current_household_id to the user's household — 24142c4
+- [x] 2.5 Tampered cookie is ignored and reset to a real membership — 24142c4
 
 ### Phase 3: Invite code join flow
 
 #### Automated
 
-- [ ] 3.1 npm run lint passes
-- [ ] 3.2 npm run build passes
-- [ ] 3.3 /join is in PROTECTED_ROUTES (unauthenticated redirect to sign-in)
+- [x] 3.1 npm run lint passes
+- [x] 3.2 npm run build passes
+- [x] 3.3 /join is in PROTECTED_ROUTES (unauthenticated redirect to sign-in)
 
 #### Manual
 
-- [ ] 3.4 User A dashboard shows a non-empty invite code
-- [ ] 3.5 User B joins with that code; cookie points at A's household
-- [ ] 3.6 Unknown code returns to /join with an error and no membership
-- [ ] 3.7 User B still has their original personal household membership
+- [x] 3.4 User A dashboard shows a non-empty invite code
+- [x] 3.5 User B joins with that code; cookie points at A's household
+- [x] 3.6 Unknown code returns to /join with an error and no membership
+- [x] 3.7 User B still has their original personal household membership
