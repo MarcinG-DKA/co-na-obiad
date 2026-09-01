@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# supabase CLI
+supabase/.temp/
+
 # dependencies
 node_modules/
 

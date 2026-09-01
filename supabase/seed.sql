@@ -1,0 +1,1 @@
+-- No seed data for v1. File exists so `supabase db reset` can load sql_paths.
