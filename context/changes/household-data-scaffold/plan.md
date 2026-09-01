@@ -277,13 +277,13 @@ Household lists are tiny (PRD: small user scale). Middleware does one membership
 
 #### Automated
 
-- [x] 3.1 npm run lint passes
-- [x] 3.2 npm run build passes
-- [x] 3.3 /join is in PROTECTED_ROUTES (unauthenticated redirect to sign-in)
+- [x] 3.1 npm run lint passes — 40f651f
+- [x] 3.2 npm run build passes — 40f651f
+- [x] 3.3 /join is in PROTECTED_ROUTES (unauthenticated redirect to sign-in) — 40f651f
 
 #### Manual
 
-- [x] 3.4 User A dashboard shows a non-empty invite code
-- [x] 3.5 User B joins with that code; cookie points at A's household
-- [x] 3.6 Unknown code returns to /join with an error and no membership
-- [x] 3.7 User B still has their original personal household membership
+- [x] 3.4 User A dashboard shows a non-empty invite code — 40f651f
+- [x] 3.5 User B joins with that code; cookie points at A's household — 40f651f
+- [x] 3.6 Unknown code returns to /join with an error and no membership — 40f651f
+- [x] 3.7 User B still has their original personal household membership — 40f651f
