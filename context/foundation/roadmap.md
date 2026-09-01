@@ -3,7 +3,7 @@ project: Co na obiad?
 version: 1
 status: draft
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-01
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -135,13 +135,13 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
-| ---------- | ----------------------- | ------------------------------------------- | --------------------- | -------------------------------------------- |
-| F-01 | household-data-scaffold | Household data model + RLS policies | yes | Run `/10x-plan household-data-scaffold` |
-| S-01 | pantry-management | Pantry view and edit | no | Needs F-01 done first |
-| S-02 | recipe-management | Recipe CRUD with ingredient lists | no | Needs F-01 done first |
-| S-03 | pantry-recipe-matching | Recipe matching ranked by pantry overlap | no | Needs S-01 + S-02 done |
-| S-04 | stale-pantry-reminder | Stale pantry reminder (7-day nudge) | no | Needs S-01 done |
+| Roadmap ID | GitHub | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
+| ---------- | ------ | ----------------------- | ------------------------------------------- | --------------------- | -------------------------------------------- |
+| F-01 | #1 | household-data-scaffold | Household data model + RLS policies | yes | Run `/10x-plan household-data-scaffold` |
+| S-01 | #2 | pantry-management | Pantry view and edit | no | Needs F-01 done first |
+| S-02 | #3 | recipe-management | Recipe CRUD with ingredient lists | no | Needs F-01 done first |
+| S-03 | #4 | pantry-recipe-matching | Recipe matching ranked by pantry overlap | no | Needs S-01 + S-02 done |
+| S-04 | #5 | stale-pantry-reminder | Stale pantry reminder (7-day nudge) | no | Needs S-01 done |
 
 ## Open Roadmap Questions
 
@@ -149,12 +149,12 @@ _(None — PRD has no open questions and no cross-cutting unknowns surfaced duri
 
 ## Parked
 
-- **FR-006: Favorite recipes** — Why parked: nice-to-have priority in PRD; deferred for speed (main goal). Can be picked up after the milestone if time allows.
-- **Ingredient substitution suggestions** — Why parked: PRD §Non-Goals, deferred to v2.
-- **Shopping list generation** — Why parked: PRD §Non-Goals, deferred to v2.
-- **AI/LLM-powered features** — Why parked: PRD §Non-Goals; basic overlap matching only in v1.
-- **Public/shared recipe catalog** — Why parked: PRD §Non-Goals; personal/household library only.
-- **Multi-day meal planning / calendar** — Why parked: PRD §Non-Goals; MVP solves "what to cook tonight."
+- **FR-006: Favorite recipes** — Why parked: nice-to-have priority in PRD; deferred for speed (main goal). Can be picked up after the milestone if time allows. → #6
+- **Ingredient substitution suggestions** — Why parked: PRD §Non-Goals, deferred to v2. → #7
+- **Shopping list generation** — Why parked: PRD §Non-Goals, deferred to v2. → #8
+- **AI/LLM-powered features** — Why parked: PRD §Non-Goals; basic overlap matching only in v1. → #9
+- **Public/shared recipe catalog** — Why parked: PRD §Non-Goals; personal/household library only. → #10
+- **Multi-day meal planning / calendar** — Why parked: PRD §Non-Goals; MVP solves "what to cook tonight." → #11
 
 ## Milestone History
 
