@@ -373,36 +373,36 @@ Deferred — no test infrastructure. The JSON API routes are testable via `curl`
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly
-- [x] 1.2 Types regenerate without error
-- [x] 1.3 Lint passes
-- [x] 1.4 Build succeeds
+- [x] 1.1 Migration applies cleanly — 3658761
+- [x] 1.2 Types regenerate without error — 3658761
+- [x] 1.3 Lint passes — 3658761
+- [x] 1.4 Build succeeds — 3658761
 
 #### Manual
 
-- [x] 1.5 Insert item as household member succeeds
-- [x] 1.6 SELECT as non-member returns empty
-- [x] 1.7 INSERT with wrong household_id rejected
-- [x] 1.8 UPDATE triggers updated_at auto-update
-- [x] 1.9 DELETE as member succeeds; DELETE as non-member no-op
+- [x] 1.5 Insert item as household member succeeds — 3658761
+- [x] 1.6 SELECT as non-member returns empty — 3658761
+- [x] 1.7 INSERT with wrong household_id rejected — 3658761
+- [x] 1.8 UPDATE triggers updated_at auto-update — 3658761
+- [x] 1.9 DELETE as member succeeds; DELETE as non-member no-op — 3658761
 
 ### Phase 2: Service layer and JSON API routes
 
 #### Automated
 
-- [ ] 2.1 Lint passes
-- [ ] 2.2 Build succeeds
-- [ ] 2.3 No TypeScript errors in new files
+- [x] 2.1 Lint passes
+- [x] 2.2 Build succeeds
+- [x] 2.3 No TypeScript errors in new files
 
 #### Manual
 
-- [ ] 2.4 GET /api/pantry returns empty array for new household
-- [ ] 2.5 POST /api/pantry creates item and returns 201
-- [ ] 2.6 POST with invalid body returns 400
-- [ ] 2.7 PATCH /api/pantry/:id updates item
-- [ ] 2.8 DELETE /api/pantry/:id removes item
-- [ ] 2.9 Unauthenticated requests return 401
-- [ ] 2.10 No-household requests return 400
+- [x] 2.4 GET /api/pantry returns empty array for new household
+- [x] 2.5 POST /api/pantry creates item and returns 201
+- [x] 2.6 POST with invalid body returns 400
+- [x] 2.7 PATCH /api/pantry/:id updates item
+- [x] 2.8 DELETE /api/pantry/:id removes item
+- [x] 2.9 Unauthenticated requests return 401
+- [x] 2.10 No-household requests return 400
 
 ### Phase 3: Pantry UI
 
