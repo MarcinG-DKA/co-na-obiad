@@ -390,36 +390,36 @@ Deferred — no test infrastructure. The JSON API routes are testable via `curl`
 
 #### Automated
 
-- [x] 2.1 Lint passes
-- [x] 2.2 Build succeeds
-- [x] 2.3 No TypeScript errors in new files
+- [x] 2.1 Lint passes — 1ed39a3
+- [x] 2.2 Build succeeds — 1ed39a3
+- [x] 2.3 No TypeScript errors in new files — 1ed39a3
 
 #### Manual
 
-- [x] 2.4 GET /api/pantry returns empty array for new household
-- [x] 2.5 POST /api/pantry creates item and returns 201
-- [x] 2.6 POST with invalid body returns 400
-- [x] 2.7 PATCH /api/pantry/:id updates item
-- [x] 2.8 DELETE /api/pantry/:id removes item
-- [x] 2.9 Unauthenticated requests return 401
-- [x] 2.10 No-household requests return 400
+- [x] 2.4 GET /api/pantry returns empty array for new household — 1ed39a3
+- [x] 2.5 POST /api/pantry creates item and returns 201 — 1ed39a3
+- [x] 2.6 POST with invalid body returns 400 — 1ed39a3
+- [x] 2.7 PATCH /api/pantry/:id updates item — 1ed39a3
+- [x] 2.8 DELETE /api/pantry/:id removes item — 1ed39a3
+- [x] 2.9 Unauthenticated requests return 401 — 1ed39a3
+- [x] 2.10 No-household requests return 400 — 1ed39a3
 
 ### Phase 3: Pantry UI
 
 #### Automated
 
-- [ ] 3.1 Lint passes
-- [ ] 3.2 Build succeeds
-- [ ] 3.3 No TypeScript errors
+- [x] 3.1 Lint passes
+- [x] 3.2 Build succeeds
+- [x] 3.3 No TypeScript errors
 
 #### Manual
 
-- [ ] 3.4 Empty pantry state renders correctly
-- [ ] 3.5 Add item appears instantly (optimistic)
-- [ ] 3.6 Add item with quantity and unit displays correctly
-- [ ] 3.7 Edit item updates inline
-- [ ] 3.8 Remove item disappears without reload
-- [ ] 3.9 Network error shows toast and reverts
-- [ ] 3.10 Cross-household isolation confirmed in browser
-- [ ] 3.11 Dashboard and topbar link to /pantry
-- [ ] 3.12 /pantry redirects unauthenticated users
+- [x] 3.4 Empty pantry state renders correctly
+- [x] 3.5 Add item appears instantly (optimistic)
+- [x] 3.6 Add item with quantity and unit displays correctly
+- [x] 3.7 Edit item updates inline
+- [x] 3.8 Remove item disappears without reload
+- [x] 3.9 Network error shows toast and reverts
+- [x] 3.10 Cross-household isolation confirmed in browser
+- [x] 3.11 Dashboard and topbar link to /pantry
+- [x] 3.12 /pantry redirects unauthenticated users

@@ -1,0 +1,47 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { listPantryItems } from "@/lib/services/pantry";
+import type { PantryItem } from "@/lib/services/pantry";
+import PantryManager from "@/components/pantry/PantryManager";
+
+const { householdId } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let items: PantryItem[] = [];
+let loadError = false;
+
+if (supabase && householdId) {
+  try {
+    items = await listPantryItems(supabase, householdId);
+  } catch {
+    loadError = true;
+  }
+}
+---
+
+<Layout title="Pantry">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        Pantry
+      </h1>
+
+      {
+        !householdId ? (
+          <p class="text-center text-sm text-blue-100/50">No household found.</p>
+        ) : loadError ? (
+          <p class="text-center text-sm text-red-300">Could not load pantry items.</p>
+        ) : (
+          <PantryManager initialItems={items} client:load />
+        )
+      }
+
+      <p class="mt-6 text-center text-sm text-blue-100/60">
+        <a href="/dashboard" class="text-purple-300 hover:underline">Back to dashboard</a>
+      </p>
+    </div>
+  </div>
+</Layout>

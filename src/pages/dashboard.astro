@@ -40,9 +40,10 @@ if (supabase && householdId) {
           <p class="mt-4 text-sm text-blue-100/50">No household</p>
         )
       }
-      <p class="mt-2 text-sm text-blue-100/60">
-        <a href="/join" class="text-purple-300 hover:underline">Join another household</a>
-      </p>
+      <div class="mt-4 flex flex-col items-center gap-2">
+        <a href="/pantry" class="text-purple-300 hover:underline">Open pantry</a>
+        <a href="/join" class="text-sm text-blue-100/60 hover:underline">Join another household</a>
+      </div>
       <form method="POST" action="/api/auth/signout" class="mt-6">
         <button
           type="submit"
