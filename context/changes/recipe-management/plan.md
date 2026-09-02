@@ -373,41 +373,41 @@ Protected list + create/edit pages, nav links, and pantry-grade error/empty/dele
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly
-- [x] 1.2 Types regenerate without error
-- [x] 1.3 Existing tests still pass
-- [x] 1.4 Lint passes
-- [x] 1.5 Build succeeds
+- [x] 1.1 Migration applies cleanly — 0f20ee0
+- [x] 1.2 Types regenerate without error — 0f20ee0
+- [x] 1.3 Existing tests still pass — 0f20ee0
+- [x] 1.4 Lint passes — 0f20ee0
+- [x] 1.5 Build succeeds — 0f20ee0
 
 #### Manual
 
-- [x] 1.6 Member save/insert of recipe + ingredients succeeds; steps round-trip in order
-- [x] 1.7 SELECT as non-member returns empty
-- [x] 1.8 Write with wrong household_id rejected
-- [x] 1.9 save_recipe with zero ingredients errors and does not leave orphan rows
-- [x] 1.10 UPDATE triggers updated_at auto-update
-- [x] 1.11 DELETE as member cascades ingredients; DELETE as non-member is a no-op
+- [x] 1.6 Member save/insert of recipe + ingredients succeeds; steps round-trip in order — 0f20ee0
+- [x] 1.7 SELECT as non-member returns empty — 0f20ee0
+- [x] 1.8 Write with wrong household_id rejected — 0f20ee0
+- [x] 1.9 save_recipe with zero ingredients errors and does not leave orphan rows — 0f20ee0
+- [x] 1.10 UPDATE triggers updated_at auto-update — 0f20ee0
+- [x] 1.11 DELETE as member cascades ingredients; DELETE as non-member is a no-op — 0f20ee0
 
 ### Phase 2: Service layer, JSON API, and Jest
 
 #### Automated
 
-- [ ] 2.1 Colocated Jest suites exist for recipe schemas, service, and API; API tests mock @/lib/supabase
-- [ ] 2.2 All tests pass
-- [ ] 2.3 Lint passes
-- [ ] 2.4 Build succeeds
-- [ ] 2.5 No TypeScript errors in new files
+- [x] 2.1 Colocated Jest suites exist for recipe schemas, service, and API; API tests mock @/lib/supabase
+- [x] 2.2 All tests pass
+- [x] 2.3 Lint passes
+- [x] 2.4 Build succeeds
+- [x] 2.5 No TypeScript errors in new files
 
 #### Manual
 
-- [ ] 2.6 GET /api/recipes returns empty array for new household
-- [ ] 2.7 POST /api/recipes creates recipe with ingredients/steps and returns 201
-- [ ] 2.8 POST with invalid body (empty title or zero ingredients) returns 400
-- [ ] 2.9 GET /api/recipes/:id returns full recipe; unknown id returns 404
-- [ ] 2.10 PATCH /api/recipes/:id replaces the ingredient list
-- [ ] 2.11 DELETE /api/recipes/:id removes recipe; subsequent GET is 404
-- [ ] 2.12 Unauthenticated requests return 401
-- [ ] 2.13 No-household requests return 400
+- [x] 2.6 GET /api/recipes returns empty array for new household
+- [x] 2.7 POST /api/recipes creates recipe with ingredients/steps and returns 201
+- [x] 2.8 POST with invalid body (empty title or zero ingredients) returns 400
+- [x] 2.9 GET /api/recipes/:id returns full recipe; unknown id returns 404
+- [x] 2.10 PATCH /api/recipes/:id replaces the ingredient list
+- [x] 2.11 DELETE /api/recipes/:id removes recipe; subsequent GET is 404
+- [x] 2.12 Unauthenticated requests return 401
+- [x] 2.13 No-household requests return 400
 
 ### Phase 3: Recipes UI
 
