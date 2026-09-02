@@ -413,19 +413,19 @@ Protected list + create/edit pages, nav links, and pantry-grade error/empty/dele
 
 #### Automated
 
-- [x] 3.1 Lint passes
-- [x] 3.2 Tests still pass
-- [x] 3.3 Build succeeds
-- [x] 3.4 No TypeScript errors
+- [x] 3.1 Lint passes — 6c536cf
+- [x] 3.2 Tests still pass — 6c536cf
+- [x] 3.3 Build succeeds — 6c536cf
+- [x] 3.4 No TypeScript errors — 6c536cf
 
 #### Manual
 
-- [x] 3.5 Empty library state and unauthenticated redirect
-- [x] 3.6 Create with title, ingredients, and steps persists on list and detail
-- [x] 3.7 Save after removing an ingredient persists replace-all
-- [x] 3.8 Zero named ingredients blocked; server list not emptied
-- [x] 3.9 List delete confirm / cancel / per-row rollback on failed DELETE
-- [x] 3.10 Network failure on Save shows toast; form data remains
-- [x] 3.11 Load error is not an empty library
-- [x] 3.12 Cross-household isolation in the browser
-- [x] 3.13 Dashboard and Topbar link to /recipes; /recipes/new is not the [id] editor
+- [x] 3.5 Empty library state and unauthenticated redirect — 6c536cf
+- [x] 3.6 Create with title, ingredients, and steps persists on list and detail — 6c536cf
+- [x] 3.7 Save after removing an ingredient persists replace-all — 6c536cf
+- [x] 3.8 Zero named ingredients blocked; server list not emptied — 6c536cf
+- [x] 3.9 List delete confirm / cancel / per-row rollback on failed DELETE — 6c536cf
+- [x] 3.10 Network failure on Save shows toast; form data remains — 6c536cf
+- [x] 3.11 Load error is not an empty library — 6c536cf
+- [x] 3.12 Cross-household isolation in the browser — 6c536cf
+- [x] 3.13 Dashboard and Topbar link to /recipes; /recipes/new is not the [id] editor — 6c536cf
