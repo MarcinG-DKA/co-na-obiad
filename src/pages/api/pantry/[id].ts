@@ -1,18 +1,10 @@
 import type { APIRoute } from "astro";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase";
 import { jsonResponse } from "@/lib/api";
+import { updatePantryItemSchema } from "@/lib/pantry-schemas";
 import { updatePantryItem, removePantryItem, PantryNotFoundError } from "@/lib/services/pantry";
 
 export const prerender = false;
-
-const updateItemSchema = z
-  .object({
-    name: z.string().trim().min(1).max(200).optional(),
-    quantity: z.number().positive().nullable().optional(),
-    unit: z.string().trim().max(50).nullable().optional(),
-  })
-  .refine((data) => Object.keys(data).length > 0, { message: "At least one field is required" });
 
 export const PATCH: APIRoute = async (context) => {
   if (!context.locals.user) {
@@ -41,7 +33,7 @@ export const PATCH: APIRoute = async (context) => {
     return jsonResponse({ error: "Invalid JSON" }, 400);
   }
 
-  const parsed = updateItemSchema.safeParse(body);
+  const parsed = updatePantryItemSchema.safeParse(body);
   if (!parsed.success) {
     return jsonResponse({ error: parsed.error.issues[0]?.message ?? "Validation failed" }, 400);
   }

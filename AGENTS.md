@@ -24,7 +24,7 @@ Auth flow, path alias, shadcn, and middleware details: `@CLAUDE.md`.
 
 ## Build, Test, and Development Commands
 
-Run scripts from `@package.json` (`dev`, `build`, `lint`, `lint:fix`, `format`, `preview`). Node **v22.14.0** (`.nvmrc`). Copy `@.env.example` → `.env` or `.dev.vars`. Run `npm run lint` before pushing. Pre-commit: husky + lint-staged (`@package.json`).
+Run scripts from `@package.json` (`dev`, `build`, `lint`, `lint:fix`, `format`, `preview`, `test`). Node **v22.14.0** (`.nvmrc`). Copy `@.env.example` → `.env` or `.dev.vars`. Run `npm run lint` and `npm test` before pushing. Pre-commit: husky + lint-staged (`@package.json`).
 
 ## Coding Style
 
@@ -32,7 +32,7 @@ API handlers validate with Zod. Extract React hooks to `src/components/hooks/`. 
 
 ## Testing
 
-No test runner configured yet. Wire a `package.json` script before documenting tests here.
+Jest (`npm test`) with `ts-jest`. Colocate `*.test.ts` next to the module under test (`src/lib/services/pantry.test.ts`, `src/pages/api/pantry/pantry-api.test.ts`). CI runs `npm test` after lint. Mock `@/lib/supabase` in API tests so `astro:env` is never loaded.
 
 ## Commit and Pull Request Guidelines
 

@@ -1,16 +1,10 @@
 import type { APIRoute } from "astro";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase";
 import { jsonResponse } from "@/lib/api";
+import { addPantryItemSchema } from "@/lib/pantry-schemas";
 import { listPantryItems, addPantryItem } from "@/lib/services/pantry";
 
 export const prerender = false;
-
-const addItemSchema = z.object({
-  name: z.string().trim().min(1).max(200),
-  quantity: z.number().positive().nullable().optional(),
-  unit: z.string().trim().max(50).nullable().optional(),
-});
 
 export const GET: APIRoute = async (context) => {
   if (!context.locals.user) {
@@ -57,7 +51,7 @@ export const POST: APIRoute = async (context) => {
     return jsonResponse({ error: "Invalid JSON" }, 400);
   }
 
-  const parsed = addItemSchema.safeParse(body);
+  const parsed = addPantryItemSchema.safeParse(body);
   if (!parsed.success) {
     return jsonResponse({ error: parsed.error.issues[0]?.message ?? "Validation failed" }, 400);
   }

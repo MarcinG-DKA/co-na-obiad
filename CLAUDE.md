@@ -9,6 +9,7 @@ This file provides guidance to AI Agent when working with code in this repositor
 - `npm run preview` — preview production build
 - `npm run lint` — ESLint with type-checked rules
 - `npm run lint:fix` — auto-fix lint issues
+- `npm test` — Jest unit tests (`*.test.ts`)
 - `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
 
 Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
