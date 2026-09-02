@@ -3,7 +3,7 @@ project: Co na obiad?
 version: 1
 status: draft
 created: 2026-08-31
-updated: 2026-09-01
+updated: 2026-09-02
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,7 +41,7 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | ----- | ----------------------- | -------------------------------------------------------- | ------------- | ---------------------------------------- | -------- |
-| F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | — | US-01, FR-001, NFR-01, Access Control | in-progress |
+| F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | — | US-01, FR-001, NFR-01, Access Control | done |
 | S-01 | pantry-management | see and edit household pantry contents | F-01 | US-02, FR-002, FR-003 | proposed |
 | S-02 | recipe-management | add, edit, and delete recipes with ingredient lists | F-01 | US-04, FR-005 | proposed |
 | S-03 | pantry-recipe-matching | see recipes ranked by ingredient overlap with pantry | S-01, S-02 | US-02, FR-004 | proposed |
@@ -81,7 +81,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** If the household membership model is wrong (e.g., one user in multiple households vs. strictly one), downstream slices inherit the mistake. Sequenced first because every vertical slice queries by household.
-- **Status:** in-progress
+- **Status:** done
 
 ## Slices
 
@@ -162,4 +162,4 @@ _(Empty — this is the first milestone.)_
 
 ## Done
 
-_(Empty on first generation. `/10x-archive` appends entries here when a change is archived.)_
+- **F-01: (foundation) Household model landed in Supabase — `households` and `household_members` tables with RLS policies enforcing per-household data isolation; new users auto-assigned to a household on signup.** — Archived 2026-09-02 → `context/archive/2026-09-01-household-data-scaffold/`. Lesson: —.
