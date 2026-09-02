@@ -48,7 +48,7 @@ export async function listMemberships(supabase: AppSupabaseClient, userId: strin
     .eq("user_id", userId);
 
   if (error) {
-    return [];
+    throw new Error(error.message);
   }
 
   return data;

@@ -28,7 +28,7 @@ export const POST: APIRoute = async (context) => {
   const { data: householdId, error } = await supabase.rpc("join_household", { p_code: parsed.data.code });
 
   if (error) {
-    return context.redirect(`/join?error=${encodeURIComponent(error.message)}`);
+    return context.redirect(`/join?error=${encodeURIComponent("Could not join")}`);
   }
 
   context.cookies.set(CURRENT_HOUSEHOLD_COOKIE, householdId, householdCookieOptions(context.url));

@@ -6,9 +6,14 @@ const { user, householdId } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 let inviteCode: string | null = null;
+let householdLoadError = false;
 if (supabase && householdId) {
-  const { data } = await supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle();
-  inviteCode = data?.invite_code ?? null;
+  const { data, error } = await supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle();
+  if (error) {
+    householdLoadError = true;
+  } else {
+    inviteCode = data?.invite_code ?? null;
+  }
 }
 ---
 
@@ -25,7 +30,9 @@ if (supabase && householdId) {
         Welcome, <span class="font-semibold text-white">{user?.email}</span>
       </p>
       {
-        inviteCode ? (
+        householdLoadError ? (
+          <p class="mt-4 text-sm text-red-300">Could not load household</p>
+        ) : inviteCode ? (
           <p class="mt-4 text-sm text-blue-100/80">
             Invite code: <code class="font-mono break-all text-white">{inviteCode}</code>
           </p>

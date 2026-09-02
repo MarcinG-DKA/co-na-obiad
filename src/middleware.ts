@@ -25,13 +25,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.householdId = null;
 
   if (supabase && context.locals.user) {
-    const memberships = await listMemberships(supabase, context.locals.user.id);
-    const incoming = context.cookies.get(CURRENT_HOUSEHOLD_COOKIE)?.value;
-    const resolved = resolveHouseholdId(memberships, incoming);
-    context.locals.householdId = resolved;
+    try {
+      const memberships = await listMemberships(supabase, context.locals.user.id);
+      const incoming = context.cookies.get(CURRENT_HOUSEHOLD_COOKIE)?.value;
+      const resolved = resolveHouseholdId(memberships, incoming);
+      context.locals.householdId = resolved;
 
-    if (resolved !== null && resolved !== incoming) {
-      context.cookies.set(CURRENT_HOUSEHOLD_COOKIE, resolved, householdCookieOptions(context.url));
+      if (resolved !== null && resolved !== incoming) {
+        context.cookies.set(CURRENT_HOUSEHOLD_COOKIE, resolved, householdCookieOptions(context.url));
+      }
+    } catch {
+      context.locals.householdId = context.cookies.get(CURRENT_HOUSEHOLD_COOKIE)?.value ?? null;
     }
   }
 
