@@ -11,7 +11,9 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 let items: PantryItem[] = [];
 let loadError = false;
 
-if (supabase && householdId) {
+if (!supabase && householdId) {
+  loadError = true;
+} else if (supabase && householdId) {
   try {
     items = await listPantryItems(supabase, householdId);
   } catch {

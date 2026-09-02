@@ -3,6 +3,13 @@ import type { Database } from "@/db/database.types";
 
 type AppSupabaseClient = SupabaseClient<Database>;
 
+export class PantryNotFoundError extends Error {
+  constructor() {
+    super("Item not found");
+    this.name = "PantryNotFoundError";
+  }
+}
+
 export interface PantryItem {
   id: string;
   household_id: string;
@@ -65,6 +72,9 @@ export async function updatePantryItem(
     .single();
 
   if (error) {
+    if (error.code === "PGRST116") {
+      throw new PantryNotFoundError();
+    }
     throw new Error(error.message);
   }
 
@@ -76,9 +86,17 @@ export async function removePantryItem(
   itemId: string,
   householdId: string,
 ): Promise<void> {
-  const { error } = await supabase.from("pantry_items").delete().eq("id", itemId).eq("household_id", householdId);
+  const { error, count } = await supabase
+    .from("pantry_items")
+    .delete({ count: "exact" })
+    .eq("id", itemId)
+    .eq("household_id", householdId);
 
   if (error) {
     throw new Error(error.message);
+  }
+
+  if (!count) {
+    throw new PantryNotFoundError();
   }
 }

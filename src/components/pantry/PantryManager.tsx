@@ -112,7 +112,9 @@ export default function PantryManager({ initialItems }: Props) {
   }
 
   async function handleRemove(itemId: string) {
-    const prev = items;
+    const removed = items.find((i) => i.id === itemId);
+    if (!removed) return;
+
     setItems((current) => current.filter((i) => i.id !== itemId));
 
     try {
@@ -122,7 +124,7 @@ export default function PantryManager({ initialItems }: Props) {
         throw new Error(json.error ?? "Could not remove item");
       }
     } catch (err) {
-      setItems(prev);
+      setItems((current) => (current.some((i) => i.id === itemId) ? current : [...current, removed]));
       toast.error(err instanceof Error ? err.message : "Could not remove item");
     }
   }
@@ -158,7 +160,7 @@ export default function PantryManager({ initialItems }: Props) {
             onChange={(e) => {
               setNewQuantity(e.target.value);
             }}
-            min="0"
+            min="1"
             step="any"
             className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
             disabled={isAdding}
@@ -214,7 +216,7 @@ export default function PantryManager({ initialItems }: Props) {
                       onChange={(e) => {
                         setEditQuantity(e.target.value);
                       }}
-                      min="0"
+                      min="1"
                       step="any"
                       className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
                     />
@@ -273,7 +275,9 @@ export default function PantryManager({ initialItems }: Props) {
                   <button
                     type="button"
                     onClick={() => {
-                      void handleRemove(item.id);
+                      if (window.confirm(`Remove ${item.name}?`)) {
+                        void handleRemove(item.id);
+                      }
                     }}
                     className="text-white/40 transition-colors hover:text-red-400"
                     aria-label={`Remove ${item.name}`}

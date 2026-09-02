@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase";
+import { jsonResponse } from "@/lib/api";
 import { listPantryItems, addPantryItem } from "@/lib/services/pantry";
 
 export const prerender = false;
@@ -10,13 +11,6 @@ const addItemSchema = z.object({
   quantity: z.number().positive().nullable().optional(),
   unit: z.string().trim().max(50).nullable().optional(),
 });
-
-function jsonResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 export const GET: APIRoute = async (context) => {
   if (!context.locals.user) {
