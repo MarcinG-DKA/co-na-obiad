@@ -39,23 +39,27 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 
 ## At a glance
 
-| ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
-| ----- | ----------------------- | -------------------------------------------------------- | ------------- | ---------------------------------------- | -------- |
-| F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | — | US-01, FR-001, NFR-01, Access Control | done |
-| S-01 | pantry-management | see and edit household pantry contents | F-01 | US-02, FR-002, FR-003 | done |
-| S-02 | recipe-management | add, edit, and delete recipes with ingredient lists | F-01 | US-04, FR-005 | proposed |
-| S-03 | pantry-recipe-matching | see recipes ranked by ingredient overlap with pantry | S-01, S-02 | US-02, FR-004 | proposed |
-| S-04 | stale-pantry-reminder | see when pantry was last updated and get a 7-day nudge | S-01 | US-03, FR-007, FR-008 | proposed |
+
+| ID   | Change ID               | Outcome (user can …)                                    | Prerequisites | PRD refs                              | Status   |
+| ---- | ----------------------- | ------------------------------------------------------- | ------------- | ------------------------------------- | -------- |
+| F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | —             | US-01, FR-001, NFR-01, Access Control | done     |
+| S-01 | pantry-management       | see and edit household pantry contents                  | F-01          | US-02, FR-002, FR-003                 | done     |
+| S-02 | recipe-management       | add, edit, and delete recipes with ingredient lists     | F-01          | US-04, FR-005                         | proposed |
+| S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | proposed |
+| S-04 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01          | US-03, FR-007, FR-008                 | proposed |
+
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme | Chain | Note |
-| ------ | -------------------- | ------------------------- | ---------------------------------------------------------------- |
-| A | Pantry → matching | `F-01` → `S-01` → `S-03` | Main path to north star; `S-03` also requires `S-02` (joins B). |
-| B | Recipe management | `S-02` | Joins Stream A at `S-03`. |
-| C | Data freshness | `S-04` | Depends on `S-01` (Stream A). |
+
+| Stream | Theme             | Chain                    | Note                                                            |
+| ------ | ----------------- | ------------------------ | --------------------------------------------------------------- |
+| A      | Pantry → matching | `F-01` → `S-01` → `S-03` | Main path to north star; `S-03` also requires `S-02` (joins B). |
+| B      | Recipe management | `S-02`                   | Joins Stream A at `S-03`.                                       |
+| C      | Data freshness    | `S-04`                   | Depends on `S-01` (Stream A).                                   |
+
 
 ## Baseline
 
@@ -135,13 +139,15 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 
 ## Backlog Handoff
 
-| Roadmap ID | GitHub | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
-| ---------- | ------ | ----------------------- | ------------------------------------------- | --------------------- | -------------------------------------------- |
-| F-01 | #1 | household-data-scaffold | Household data model + RLS policies | yes | Run `/10x-plan household-data-scaffold` |
-| S-01 | #2 | pantry-management | Pantry view and edit | no | Needs F-01 done first |
-| S-02 | #3 | recipe-management | Recipe CRUD with ingredient lists | no | Needs F-01 done first |
-| S-03 | #4 | pantry-recipe-matching | Recipe matching ranked by pantry overlap | no | Needs S-01 + S-02 done |
-| S-04 | #5 | stale-pantry-reminder | Stale pantry reminder (7-day nudge) | no | Needs S-01 done |
+
+| Roadmap ID | GitHub | Change ID               | Suggested issue title                    | Ready for `/10x-plan` | Notes                                   |
+| ---------- | ------ | ----------------------- | ---------------------------------------- | --------------------- | --------------------------------------- |
+| F-01       | #1     | household-data-scaffold | Household data model + RLS policies      | yes                   | Run `/10x-plan household-data-scaffold` |
+| S-01       | #2     | pantry-management       | Pantry view and edit                     | no                    | Needs F-01 done first                   |
+| S-02       | #3     | recipe-management       | Recipe CRUD with ingredient lists        | no                    | Needs F-01 done first                   |
+| S-03       | #4     | pantry-recipe-matching  | Recipe matching ranked by pantry overlap | no                    | Needs S-01 + S-02 done                  |
+| S-04       | #5     | stale-pantry-reminder   | Stale pantry reminder (7-day nudge)      | no                    | Needs S-01 done                         |
+
 
 ## Open Roadmap Questions
 
@@ -164,3 +170,4 @@ _(Empty — this is the first milestone.)_
 
 - **F-01: (foundation) Household model landed in Supabase — `households` and `household_members` tables with RLS policies enforcing per-household data isolation; new users auto-assigned to a household on signup.** — Archived 2026-09-02 → `context/archive/2026-09-01-household-data-scaffold/`. Lesson: —.
 - **S-01: User can see the household pantry contents and add, edit, or remove items.** — Archived 2026-09-02 → `context/archive/2026-09-02-pantry-management/`. Lesson: —.
+
