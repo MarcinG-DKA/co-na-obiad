@@ -42,7 +42,7 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | ----- | ----------------------- | -------------------------------------------------------- | ------------- | ---------------------------------------- | -------- |
 | F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | — | US-01, FR-001, NFR-01, Access Control | done |
-| S-01 | pantry-management | see and edit household pantry contents | F-01 | US-02, FR-002, FR-003 | in-progress |
+| S-01 | pantry-management | see and edit household pantry contents | F-01 | US-02, FR-002, FR-003 | done |
 | S-02 | recipe-management | add, edit, and delete recipes with ingredient lists | F-01 | US-04, FR-005 | proposed |
 | S-03 | pantry-recipe-matching | see recipes ranked by ingredient overlap with pantry | S-01, S-02 | US-02, FR-004 | proposed |
 | S-04 | stale-pantry-reminder | see when pantry was last updated and get a 7-day nudge | S-01 | US-03, FR-007, FR-008 | proposed |
@@ -95,7 +95,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Pantry UX must be fast enough for "standing in front of the fridge" moments; if editing is cumbersome, users won't maintain accurate inventory. Sequenced early because the north star (S-03) and stale-reminder (S-04) both depend on it.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Recipe management
 
@@ -163,3 +163,4 @@ _(Empty — this is the first milestone.)_
 ## Done
 
 - **F-01: (foundation) Household model landed in Supabase — `households` and `household_members` tables with RLS policies enforcing per-household data isolation; new users auto-assigned to a household on signup.** — Archived 2026-09-02 → `context/archive/2026-09-01-household-data-scaffold/`. Lesson: —.
+- **S-01: User can see the household pantry contents and add, edit, or remove items.** — Archived 2026-09-02 → `context/archive/2026-09-02-pantry-management/`. Lesson: —.

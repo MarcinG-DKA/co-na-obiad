@@ -1,10 +1,10 @@
 ---
 change_id: pantry-management
 title: See and edit household pantry contents
-status: impl_reviewed
+status: archived
 created: 2026-09-02
 updated: 2026-09-02
-archived_at: null
+archived_at: 2026-09-02T10:24:37Z
 ---
 
 ## Notes
