@@ -78,7 +78,7 @@ const sampleItem = {
   household_id: "hh-1",
   name: "Milk",
   quantity: 2,
-  unit: "L",
+  unit: "ml",
   created_at: "2026-09-02T00:00:00Z",
   updated_at: "2026-09-02T00:00:00Z",
 };

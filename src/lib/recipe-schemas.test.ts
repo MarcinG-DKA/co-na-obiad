@@ -27,7 +27,7 @@ describe("saveRecipeSchema", () => {
     expect(
       saveRecipeSchema.safeParse({
         title: "Soup",
-        ingredients: [{ name: "Water", quantity: 0, unit: "L" }],
+        ingredients: [{ name: "Water", quantity: 0, unit: "ml" }],
       }).success,
     ).toBe(false);
   });
@@ -35,12 +35,21 @@ describe("saveRecipeSchema", () => {
   it("accepts a positive quantity and optional unit", () => {
     const parsed = saveRecipeSchema.safeParse({
       title: "Soup",
-      ingredients: [{ name: "Water", quantity: 1, unit: "L" }],
+      ingredients: [{ name: "Water", quantity: 1, unit: "ml" }],
     });
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.ingredients[0]).toMatchObject({ name: "Water", quantity: 1, unit: "L" });
+      expect(parsed.data.ingredients[0]).toMatchObject({ name: "Water", quantity: 1, unit: "ml" });
     }
+  });
+
+  it("rejects a free-text unit", () => {
+    expect(
+      saveRecipeSchema.safeParse({
+        title: "Soup",
+        ingredients: [{ name: "Water", quantity: 1, unit: "L" }],
+      }).success,
+    ).toBe(false);
   });
 
   it("accepts null quantity and unit", () => {

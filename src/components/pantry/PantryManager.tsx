@@ -3,7 +3,9 @@ import { Plus, Pencil, Trash2, Check, X, Package } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { UnitSelect } from "@/components/ui/unit-select";
 import { cn } from "@/lib/utils";
+import { isUnit } from "@/lib/units";
 import type { PantryItem } from "@/lib/services/pantry";
 
 interface Props {
@@ -29,7 +31,7 @@ export default function PantryManager({ initialItems }: Props) {
 
     const tempId = `temp-${Date.now()}`;
     const quantity = newQuantity ? Number(newQuantity) : null;
-    const unit = newUnit.trim() || null;
+    const unit = isUnit(newUnit) ? newUnit : null;
 
     const optimistic: PantryItem = {
       id: tempId,
@@ -84,7 +86,7 @@ export default function PantryManager({ initialItems }: Props) {
     if (!name) return;
 
     const quantity = editQuantity ? Number(editQuantity) : null;
-    const unit = editUnit.trim() || null;
+    const unit = isUnit(editUnit) ? editUnit : null;
 
     const prev = items.find((i) => i.id === itemId);
     if (!prev) return;
@@ -165,15 +167,11 @@ export default function PantryManager({ initialItems }: Props) {
             className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
             disabled={isAdding}
           />
-          <Input
-            type="text"
-            placeholder="Unit (g, ml, pcs...)"
+          <UnitSelect
             value={newUnit}
-            onChange={(e) => {
-              setNewUnit(e.target.value);
-            }}
-            className="w-40 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+            onValueChange={setNewUnit}
             disabled={isAdding}
+            className="w-40 border-white/20 bg-white/10 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
           />
         </div>
       </form>
@@ -220,14 +218,10 @@ export default function PantryManager({ initialItems }: Props) {
                       step="any"
                       className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
                     />
-                    <Input
-                      type="text"
-                      placeholder="Unit"
+                    <UnitSelect
                       value={editUnit}
-                      onChange={(e) => {
-                        setEditUnit(e.target.value);
-                      }}
-                      className="w-32 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+                      onValueChange={setEditUnit}
+                      className="w-32 border-white/20 bg-white/10 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
                     />
                     <Button
                       type="button"

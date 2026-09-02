@@ -86,7 +86,7 @@ const detailRow = {
       id: "ing-1",
       name: "water",
       quantity: 1,
-      unit: "L",
+      unit: "ml",
       position: 0,
       created_at: "2026-09-02T00:00:00Z",
       updated_at: "2026-09-02T00:00:00Z",
@@ -97,7 +97,7 @@ const detailRow = {
 const saveInput = {
   title: "Soup",
   steps: ["boil"],
-  ingredients: [{ name: "water", quantity: 1, unit: "L" }],
+  ingredients: [{ name: "water", quantity: 1, unit: "ml" }],
 };
 
 describe("listRecipes", () => {
@@ -154,7 +154,7 @@ describe("saveRecipe", () => {
       p_recipe_id: null,
       p_title: "Soup",
       p_steps: ["boil"],
-      p_ingredients: [{ name: "water", quantity: 1, unit: "L" }],
+      p_ingredients: [{ name: "water", quantity: 1, unit: "ml" }],
     });
     expect(from).toHaveBeenCalledWith("recipes");
     expect(recipe.id).toBe("recipe-1");
