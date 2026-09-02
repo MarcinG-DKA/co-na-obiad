@@ -7,7 +7,7 @@ import {
   resolveHouseholdId,
 } from "@/lib/services/household";
 
-export const PROTECTED_ROUTES = ["/dashboard", "/join", "/pantry"];
+export const PROTECTED_ROUTES = ["/dashboard", "/join", "/pantry", "/recipes"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const responseHeaders = new Headers();

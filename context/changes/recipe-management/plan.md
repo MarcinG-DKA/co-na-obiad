@@ -392,40 +392,40 @@ Protected list + create/edit pages, nav links, and pantry-grade error/empty/dele
 
 #### Automated
 
-- [x] 2.1 Colocated Jest suites exist for recipe schemas, service, and API; API tests mock @/lib/supabase
-- [x] 2.2 All tests pass
-- [x] 2.3 Lint passes
-- [x] 2.4 Build succeeds
-- [x] 2.5 No TypeScript errors in new files
+- [x] 2.1 Colocated Jest suites exist for recipe schemas, service, and API; API tests mock @/lib/supabase — f1c8a63
+- [x] 2.2 All tests pass — f1c8a63
+- [x] 2.3 Lint passes — f1c8a63
+- [x] 2.4 Build succeeds — f1c8a63
+- [x] 2.5 No TypeScript errors in new files — f1c8a63
 
 #### Manual
 
-- [x] 2.6 GET /api/recipes returns empty array for new household
-- [x] 2.7 POST /api/recipes creates recipe with ingredients/steps and returns 201
-- [x] 2.8 POST with invalid body (empty title or zero ingredients) returns 400
-- [x] 2.9 GET /api/recipes/:id returns full recipe; unknown id returns 404
-- [x] 2.10 PATCH /api/recipes/:id replaces the ingredient list
-- [x] 2.11 DELETE /api/recipes/:id removes recipe; subsequent GET is 404
-- [x] 2.12 Unauthenticated requests return 401
-- [x] 2.13 No-household requests return 400
+- [x] 2.6 GET /api/recipes returns empty array for new household — f1c8a63
+- [x] 2.7 POST /api/recipes creates recipe with ingredients/steps and returns 201 — f1c8a63
+- [x] 2.8 POST with invalid body (empty title or zero ingredients) returns 400 — f1c8a63
+- [x] 2.9 GET /api/recipes/:id returns full recipe; unknown id returns 404 — f1c8a63
+- [x] 2.10 PATCH /api/recipes/:id replaces the ingredient list — f1c8a63
+- [x] 2.11 DELETE /api/recipes/:id removes recipe; subsequent GET is 404 — f1c8a63
+- [x] 2.12 Unauthenticated requests return 401 — f1c8a63
+- [x] 2.13 No-household requests return 400 — f1c8a63
 
 ### Phase 3: Recipes UI
 
 #### Automated
 
-- [ ] 3.1 Lint passes
-- [ ] 3.2 Tests still pass
-- [ ] 3.3 Build succeeds
-- [ ] 3.4 No TypeScript errors
+- [x] 3.1 Lint passes
+- [x] 3.2 Tests still pass
+- [x] 3.3 Build succeeds
+- [x] 3.4 No TypeScript errors
 
 #### Manual
 
-- [ ] 3.5 Empty library state and unauthenticated redirect
-- [ ] 3.6 Create with title, ingredients, and steps persists on list and detail
-- [ ] 3.7 Save after removing an ingredient persists replace-all
-- [ ] 3.8 Zero named ingredients blocked; server list not emptied
-- [ ] 3.9 List delete confirm / cancel / per-row rollback on failed DELETE
-- [ ] 3.10 Network failure on Save shows toast; form data remains
-- [ ] 3.11 Load error is not an empty library
-- [ ] 3.12 Cross-household isolation in the browser
-- [ ] 3.13 Dashboard and Topbar link to /recipes; /recipes/new is not the [id] editor
+- [x] 3.5 Empty library state and unauthenticated redirect
+- [x] 3.6 Create with title, ingredients, and steps persists on list and detail
+- [x] 3.7 Save after removing an ingredient persists replace-all
+- [x] 3.8 Zero named ingredients blocked; server list not emptied
+- [x] 3.9 List delete confirm / cancel / per-row rollback on failed DELETE
+- [x] 3.10 Network failure on Save shows toast; form data remains
+- [x] 3.11 Load error is not an empty library
+- [x] 3.12 Cross-household isolation in the browser
+- [x] 3.13 Dashboard and Topbar link to /recipes; /recipes/new is not the [id] editor

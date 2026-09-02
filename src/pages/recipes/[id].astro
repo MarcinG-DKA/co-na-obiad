@@ -1,0 +1,59 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { getRecipe, RecipeNotFoundError } from "@/lib/services/recipe";
+import type { Recipe } from "@/lib/services/recipe";
+import RecipeEditor from "@/components/recipes/RecipeEditor";
+
+const { householdId } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const recipeId = Astro.params.id;
+
+let recipe: Recipe | null = null;
+let loadError = false;
+let notFound = false;
+
+if (!recipeId) {
+  notFound = true;
+} else if (!supabase && householdId) {
+  loadError = true;
+} else if (supabase && householdId) {
+  try {
+    recipe = await getRecipe(supabase, recipeId, householdId);
+  } catch (err) {
+    if (err instanceof RecipeNotFoundError) {
+      notFound = true;
+    } else {
+      loadError = true;
+    }
+  }
+}
+---
+
+<Layout title={recipe?.title ?? "Recipe"}>
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        {recipe?.title ?? "Recipe"}
+      </h1>
+
+      {
+        !householdId ? (
+          <p class="text-center text-sm text-blue-100/50">No household found.</p>
+        ) : loadError ? (
+          <p class="text-center text-sm text-red-300">Could not load recipe.</p>
+        ) : notFound || !recipe ? (
+          <p class="text-center text-sm text-blue-100/50">Recipe not found.</p>
+        ) : (
+          <RecipeEditor recipe={recipe} client:load />
+        )
+      }
+
+      <p class="mt-6 text-center text-sm text-blue-100/60">
+        <a href="/recipes" class="text-purple-300 hover:underline">Back to recipes</a>
+      </p>
+    </div>
+  </div>
+</Layout>
