@@ -127,6 +127,11 @@ describe("POST /api/pantry", () => {
     expect(status).toBe(400);
   });
 
+  it("returns 400 when unit is not ml, g, or pcs", async () => {
+    const { status } = await read(await POST(context({ method: "POST", body: { name: "Milk", unit: "L" } })));
+    expect(status).toBe(400);
+  });
+
   it("returns 201 with the created item", async () => {
     mockAdd.mockResolvedValue(sampleItem);
     const { status, body } = await read(await POST(context({ method: "POST", body: { name: "Milk" } })));

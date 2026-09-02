@@ -3,7 +3,9 @@ import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { UnitSelect } from "@/components/ui/unit-select";
 import { cn } from "@/lib/utils";
+import { isUnit } from "@/lib/units";
 import type { Recipe } from "@/lib/services/recipe";
 
 interface Props {
@@ -46,7 +48,7 @@ function draftsFromRecipe(recipe?: Recipe): { title: string; ingredients: Ingred
       key: ingredient.id,
       name: ingredient.name,
       quantity: ingredient.quantity != null ? String(ingredient.quantity) : "",
-      unit: ingredient.unit ?? "",
+      unit: isUnit(ingredient.unit) ? ingredient.unit : "",
     })),
     steps: recipe.steps.map((text) => ({ key: newKey(), text })),
   };
@@ -100,7 +102,7 @@ export default function RecipeEditor({ recipe }: Props) {
     for (const row of ingredients) {
       const name = row.name.trim();
       const quantity = parseQuantity(row.quantity);
-      const unit = row.unit.trim() || null;
+      const unit = isUnit(row.unit) ? row.unit : null;
       if (!name && !row.quantity.trim() && !row.unit.trim()) {
         continue;
       }
@@ -226,16 +228,13 @@ export default function RecipeEditor({ recipe }: Props) {
                   className={cn(fieldClass, "w-24")}
                   disabled={isSaving}
                 />
-                <Input
-                  type="text"
-                  placeholder="Unit"
+                <UnitSelect
                   value={row.unit}
-                  onChange={(e) => {
-                    updateIngredient(row.key, { unit: e.target.value });
+                  onValueChange={(unit) => {
+                    updateIngredient(row.key, { unit });
                   }}
                   className={cn(fieldClass, "flex-1")}
                   disabled={isSaving}
-                  maxLength={50}
                 />
                 <Button
                   type="button"

@@ -34,6 +34,18 @@ describe("addPantryItemSchema", () => {
     }
   });
 
+  it("rejects a free-text unit", () => {
+    expect(addPantryItemSchema.safeParse({ name: "Milk", unit: "L" }).success).toBe(false);
+  });
+
+  it("normalizes unit casing", () => {
+    const parsed = addPantryItemSchema.safeParse({ name: "Milk", unit: "ML" });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.unit).toBe("ml");
+    }
+  });
+
   it("accepts null quantity and unit", () => {
     const parsed = addPantryItemSchema.safeParse({ name: "Salt", quantity: null, unit: null });
     expect(parsed.success).toBe(true);

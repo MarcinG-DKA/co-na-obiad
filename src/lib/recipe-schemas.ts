@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { unitSchema } from "@/lib/units";
 
 export const recipeIngredientSchema = z.object({
   name: z.string().trim().min(1).max(200),
   quantity: z.number().positive().nullable().optional(),
-  unit: z.string().trim().max(50).nullable().optional(),
+  unit: unitSchema,
 });
 
 export const saveRecipeSchema = z.object({

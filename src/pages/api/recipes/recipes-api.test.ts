@@ -43,7 +43,7 @@ const sampleRecipe = {
       id: "ing-1",
       name: "water",
       quantity: 1,
-      unit: "L",
+      unit: "ml",
       position: 0,
       created_at: "2026-09-02T00:00:00Z",
       updated_at: "2026-09-02T00:00:00Z",
@@ -54,7 +54,7 @@ const sampleRecipe = {
 const writeBody = {
   title: "Soup",
   steps: ["boil"],
-  ingredients: [{ name: "water", quantity: 1, unit: "L" }],
+  ingredients: [{ name: "water", quantity: 1, unit: "ml" }],
 };
 
 function context(
@@ -147,6 +147,13 @@ describe("POST /api/recipes", () => {
     expect(status).toBe(400);
   });
 
+  it("returns 400 when unit is not ml, g, or pcs", async () => {
+    const { status } = await read(
+      await POST(context({ method: "POST", body: { title: "Soup", ingredients: [{ name: "water", unit: "L" }] } })),
+    );
+    expect(status).toBe(400);
+  });
+
   it("returns 201 with the created recipe", async () => {
     mockSave.mockResolvedValue(sampleRecipe);
     const { status, body } = await read(await POST(context({ method: "POST", body: writeBody })));
@@ -155,7 +162,7 @@ describe("POST /api/recipes", () => {
     expect(mockSave).toHaveBeenCalledWith(expect.anything(), "hh-1", {
       title: "Soup",
       steps: ["boil"],
-      ingredients: [{ name: "water", quantity: 1, unit: "L" }],
+      ingredients: [{ name: "water", quantity: 1, unit: "ml" }],
     });
   });
 });
