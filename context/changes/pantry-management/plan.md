@@ -408,18 +408,18 @@ Deferred — no test infrastructure. The JSON API routes are testable via `curl`
 
 #### Automated
 
-- [x] 3.1 Lint passes
-- [x] 3.2 Build succeeds
-- [x] 3.3 No TypeScript errors
+- [x] 3.1 Lint passes — b426b47
+- [x] 3.2 Build succeeds — b426b47
+- [x] 3.3 No TypeScript errors — b426b47
 
 #### Manual
 
-- [x] 3.4 Empty pantry state renders correctly
-- [x] 3.5 Add item appears instantly (optimistic)
-- [x] 3.6 Add item with quantity and unit displays correctly
-- [x] 3.7 Edit item updates inline
-- [x] 3.8 Remove item disappears without reload
-- [x] 3.9 Network error shows toast and reverts
-- [x] 3.10 Cross-household isolation confirmed in browser
-- [x] 3.11 Dashboard and topbar link to /pantry
-- [x] 3.12 /pantry redirects unauthenticated users
+- [x] 3.4 Empty pantry state renders correctly — b426b47
+- [x] 3.5 Add item appears instantly (optimistic) — b426b47
+- [x] 3.6 Add item with quantity and unit displays correctly — b426b47
+- [x] 3.7 Edit item updates inline — b426b47
+- [x] 3.8 Remove item disappears without reload — b426b47
+- [x] 3.9 Network error shows toast and reverts — b426b47
+- [x] 3.10 Cross-household isolation confirmed in browser — b426b47
+- [x] 3.11 Dashboard and topbar link to /pantry — b426b47
+- [x] 3.12 /pantry redirects unauthenticated users — b426b47
