@@ -279,29 +279,29 @@ No schema or data migration. Existing free-text names stay as stored; only compa
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Unit tests pass: `npm test` — 6479ef6
+- [x] 2.2 Linting passes: `npm run lint` — 6479ef6
 
 #### Manual
 
-- [x] 2.3 Authenticated `GET /api/matches` returns `{ data: [...] }` ordered by score
-- [x] 2.4 Unauthenticated request returns 401
+- [x] 2.3 Authenticated `GET /api/matches` returns `{ data: [...] }` ordered by score — 6479ef6
+- [x] 2.4 Unauthenticated request returns 401 — 6479ef6
 
 ### Phase 3: Dashboard ranked list and post-login redirect
 
 #### Automated
 
-- [ ] 3.1 Unit tests pass: `npm test`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Production build passes: `npm run build`
+- [x] 3.1 Unit tests pass: `npm test`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Sign in → `/dashboard` shows ranked recipes (not Welcome)
-- [ ] 3.5 Each row shows percent score + missing ingredient names; title opens `/recipes/:id`
-- [ ] 3.6 Empty pantry: all recipes at 0% with all ingredients listed as missing
-- [ ] 3.7 Empty recipe library: empty-state CTA to add a recipe; no fake rows
-- [ ] 3.8 Zero-overlap recipes appear below partial/full matches
-- [ ] 3.9 Add/remove a pantry item on `/pantry`, return to dashboard: ranking and missing names update
-- [ ] 3.10 Load failure shows an error, not an empty library
-- [ ] 3.11 Another household’s recipes never appear
+- [x] 3.4 Sign in → `/dashboard` shows ranked recipes (not Welcome)
+- [x] 3.5 Each row shows percent score + missing ingredient names; title opens `/recipes/:id`
+- [x] 3.6 Empty pantry: all recipes at 0% with all ingredients listed as missing
+- [x] 3.7 Empty recipe library: empty-state CTA to add a recipe; no fake rows
+- [x] 3.8 Zero-overlap recipes appear below partial/full matches
+- [x] 3.9 Add/remove a pantry item on `/pantry`, return to dashboard: ranking and missing names update
+- [x] 3.10 Load failure shows an error, not an empty library
+- [x] 3.11 Another household’s recipes never appear
