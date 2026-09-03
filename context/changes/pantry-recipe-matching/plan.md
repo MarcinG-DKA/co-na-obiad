@@ -272,20 +272,20 @@ No schema or data migration. Existing free-text names stay as stored; only compa
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 Unit tests pass: `npm test` — 6701560
+- [x] 1.2 Linting passes: `npm run lint` — 6701560
 
 ### Phase 2: GET /api/matches
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Authenticated `GET /api/matches` returns `{ data: [...] }` ordered by score
-- [ ] 2.4 Unauthenticated request returns 401
+- [x] 2.3 Authenticated `GET /api/matches` returns `{ data: [...] }` ordered by score
+- [x] 2.4 Unauthenticated request returns 401
 
 ### Phase 3: Dashboard ranked list and post-login redirect
 
