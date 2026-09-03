@@ -14,10 +14,11 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
   const [matches, setMatches] = useState(initialMatches);
   const [hasLoadError, setHasLoadError] = useState(loadError);
   const inFlight = useRef(false);
-  const skipFirstVisible = useRef(true);
+  const pendingRefresh = useRef(false);
 
   async function refreshMatches() {
     if (inFlight.current) {
+      pendingRefresh.current = true;
       return;
     }
     inFlight.current = true;
@@ -33,6 +34,10 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
       toast.error(err instanceof Error ? err.message : "Could not load matches");
     } finally {
       inFlight.current = false;
+      if (pendingRefresh.current) {
+        pendingRefresh.current = false;
+        void refreshMatches();
+      }
     }
   }
 
@@ -44,14 +49,9 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
     }
 
     function onVisibilityChange() {
-      if (document.visibilityState !== "visible") {
-        return;
+      if (document.visibilityState === "visible") {
+        void refreshMatches();
       }
-      if (skipFirstVisible.current) {
-        skipFirstVisible.current = false;
-        return;
-      }
-      void refreshMatches();
     }
 
     window.addEventListener("pageshow", onPageShow);

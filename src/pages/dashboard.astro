@@ -14,16 +14,24 @@ let matches: RecipeMatch[] = [];
 let matchesLoadError = false;
 
 if (supabase && householdId) {
-  const { data, error } = await supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle();
-  if (error) {
-    householdLoadError = true;
+  const [householdResult, matchesResult] = await Promise.allSettled([
+    supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle(),
+    listMatches(supabase, householdId),
+  ]);
+
+  if (householdResult.status === "fulfilled") {
+    if (householdResult.value.error) {
+      householdLoadError = true;
+    } else {
+      inviteCode = householdResult.value.data?.invite_code ?? null;
+    }
   } else {
-    inviteCode = data?.invite_code ?? null;
+    householdLoadError = true;
   }
 
-  try {
-    matches = await listMatches(supabase, householdId);
-  } catch {
+  if (matchesResult.status === "fulfilled") {
+    matches = matchesResult.value;
+  } else {
     matchesLoadError = true;
   }
 } else if (!supabase && householdId) {
