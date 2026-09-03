@@ -5,6 +5,20 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { RecipeMatch } from "@/lib/services/matching";
 
+function scorePercent(score: number): number {
+  return Math.round(score * 100);
+}
+
+function scorePercentClass(percent: number): string {
+  if (percent === 100) {
+    return "text-emerald-300";
+  }
+  if (percent === 0) {
+    return "text-red-300";
+  }
+  return "text-orange-300";
+}
+
 interface Props {
   initialMatches: RecipeMatch[];
   loadError?: boolean;
@@ -87,20 +101,23 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
 
   return (
     <ul className="w-full space-y-2">
-      {matches.map((match) => (
-        <li key={match.recipeId} className={cn("rounded-lg border border-white/10 bg-white/5 px-4 py-3")}>
-          <a
-            href={`/recipes/${match.recipeId}`}
-            className="flex min-w-0 items-baseline justify-between gap-3 hover:underline"
-          >
-            <span className="font-medium text-white">{match.title}</span>
-            <span className="shrink-0 text-sm text-blue-100/60">{Math.round(match.score * 100)}%</span>
-          </a>
-          {match.missingNames.length > 0 ? (
-            <p className="mt-1 text-sm text-blue-100/50">Missing: {match.missingNames.join(", ")}</p>
-          ) : null}
-        </li>
-      ))}
+      {matches.map((match) => {
+        const percent = scorePercent(match.score);
+        return (
+          <li key={match.recipeId} className={cn("rounded-lg border border-white/10 bg-white/5 px-4 py-3")}>
+            <a
+              href={`/recipes/${match.recipeId}`}
+              className="flex min-w-0 items-baseline justify-between gap-3 hover:underline"
+            >
+              <span className="font-medium text-white">{match.title}</span>
+              <span className={cn("shrink-0 text-sm font-medium", scorePercentClass(percent))}>{percent}%</span>
+            </a>
+            {match.missingNames.length > 0 ? (
+              <p className="mt-1 text-sm text-blue-100/50">Missing: {match.missingNames.join(", ")}</p>
+            ) : null}
+          </li>
+        );
+      })}
     </ul>
   );
 }
