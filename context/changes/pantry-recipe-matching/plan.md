@@ -291,17 +291,17 @@ No schema or data migration. Existing free-text names stay as stored; only compa
 
 #### Automated
 
-- [x] 3.1 Unit tests pass: `npm test`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Production build passes: `npm run build`
+- [x] 3.1 Unit tests pass: `npm test` — 287eed9
+- [x] 3.2 Linting passes: `npm run lint` — 287eed9
+- [x] 3.3 Production build passes: `npm run build` — 287eed9
 
 #### Manual
 
-- [x] 3.4 Sign in → `/dashboard` shows ranked recipes (not Welcome)
-- [x] 3.5 Each row shows percent score + missing ingredient names; title opens `/recipes/:id`
-- [x] 3.6 Empty pantry: all recipes at 0% with all ingredients listed as missing
-- [x] 3.7 Empty recipe library: empty-state CTA to add a recipe; no fake rows
-- [x] 3.8 Zero-overlap recipes appear below partial/full matches
-- [x] 3.9 Add/remove a pantry item on `/pantry`, return to dashboard: ranking and missing names update
-- [x] 3.10 Load failure shows an error, not an empty library
-- [x] 3.11 Another household’s recipes never appear
+- [x] 3.4 Sign in → `/dashboard` shows ranked recipes (not Welcome) — 287eed9
+- [x] 3.5 Each row shows percent score + missing ingredient names; title opens `/recipes/:id` — 287eed9
+- [x] 3.6 Empty pantry: all recipes at 0% with all ingredients listed as missing — 287eed9
+- [x] 3.7 Empty recipe library: empty-state CTA to add a recipe; no fake rows — 287eed9
+- [x] 3.8 Zero-overlap recipes appear below partial/full matches — 287eed9
+- [x] 3.9 Add/remove a pantry item on `/pantry`, return to dashboard: ranking and missing names update — 287eed9
+- [x] 3.10 Load failure shows an error, not an empty library — 287eed9
+- [x] 3.11 Another household’s recipes never appear — 287eed9
