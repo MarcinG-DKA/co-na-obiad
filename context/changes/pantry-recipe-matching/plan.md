@@ -272,8 +272,8 @@ No schema or data migration. Existing free-text names stay as stored; only compa
 
 #### Automated
 
-- [ ] 1.1 Unit tests pass: `npm test`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 Unit tests pass: `npm test`
+- [x] 1.2 Linting passes: `npm run lint`
 
 ### Phase 2: GET /api/matches
 

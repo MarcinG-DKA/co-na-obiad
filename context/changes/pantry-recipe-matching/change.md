@@ -1,7 +1,7 @@
 ---
 change_id: pantry-recipe-matching
 title: Rank saved recipes by pantry ingredient overlap
-status: planned
+status: implementing
 created: 2026-09-03
 updated: 2026-09-03
 archived_at: null

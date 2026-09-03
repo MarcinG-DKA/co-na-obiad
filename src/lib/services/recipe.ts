@@ -6,6 +6,7 @@ type AppSupabaseClient = SupabaseClient<Database>;
 const RECIPE_LIST_SELECT = "id, household_id, title, created_at, updated_at, recipe_ingredients(count)";
 const RECIPE_DETAIL_SELECT =
   "id, household_id, title, steps, created_at, updated_at, recipe_ingredients(id, name, quantity, unit, position, created_at, updated_at)";
+const RECIPE_MATCH_SELECT = "id, title, recipe_ingredients(name, position)";
 
 export class RecipeNotFoundError extends Error {
   constructor() {
@@ -43,6 +44,12 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
+export interface RecipeWithIngredientNames {
+  id: string;
+  title: string;
+  ingredients: { name: string }[];
+}
+
 export interface SaveRecipeInput {
   title: string;
   steps: string[];
@@ -72,6 +79,12 @@ interface RecipeDetailRow {
   recipe_ingredients: RecipeIngredient[] | null;
 }
 
+interface RecipeMatchRow {
+  id: string;
+  title: string;
+  recipe_ingredients: { name: string; position: number }[] | null;
+}
+
 function mapListItem(row: RecipeListRow): RecipeListItem {
   return {
     id: row.id,
@@ -96,6 +109,17 @@ function mapRecipe(row: RecipeDetailRow): Recipe {
   };
 }
 
+function mapRecipeWithIngredientNames(row: RecipeMatchRow): RecipeWithIngredientNames {
+  const ingredients = [...(row.recipe_ingredients ?? [])]
+    .sort((a, b) => a.position - b.position)
+    .map((ingredient) => ({ name: ingredient.name }));
+  return {
+    id: row.id,
+    title: row.title,
+    ingredients,
+  };
+}
+
 function isRecipeNotFoundMessage(message: string): boolean {
   return message.includes("Recipe not found");
 }
@@ -112,6 +136,24 @@ export async function listRecipes(supabase: AppSupabaseClient, householdId: stri
   }
 
   return (data as unknown as RecipeListRow[]).map(mapListItem);
+}
+
+export async function listRecipesWithIngredients(
+  supabase: AppSupabaseClient,
+  householdId: string,
+): Promise<RecipeWithIngredientNames[]> {
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(RECIPE_MATCH_SELECT)
+    .eq("household_id", householdId)
+    .order("created_at", { ascending: true })
+    .order("position", { referencedTable: "recipe_ingredients", ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data as unknown as RecipeMatchRow[]).map(mapRecipeWithIngredientNames);
 }
 
 export async function getRecipe(supabase: AppSupabaseClient, recipeId: string, householdId: string): Promise<Recipe> {
