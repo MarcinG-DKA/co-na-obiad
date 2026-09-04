@@ -1,14 +1,16 @@
 ---
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
+import Topbar from "@/components/Topbar.astro";
 import { Toaster } from "@/components/ui/sonner";
 import { missingConfigs } from "@/lib/config-status";
 
 interface Props {
   title?: string;
+  showTopbar?: boolean;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "10x Astro Starter", showTopbar = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -36,7 +38,12 @@ const { title = "10x Astro Starter" } = Astro.props;
         </Banner>
       ))
     }
-    <slot />
+    <div class:list={showTopbar && ["bg-cosmic flex min-h-screen flex-col p-4"]}>
+      {showTopbar && <Topbar />}
+      <div class:list={showTopbar && ["flex flex-1 items-center justify-center"]}>
+        <slot />
+      </div>
+    </div>
     <Toaster client:load position="bottom-right" />
   </body>
 </html>

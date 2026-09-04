@@ -232,30 +232,30 @@ No data migration. Bookmarks to `/dashboard` 404 by design. Update any personal 
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test` (helper: `/` protected; `/auth/signin` and `/api/auth/signin` not; `/recipes/new` protected; `/dashboard` not)
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Production build passes: `npm run build`
+- [x] 1.1 Unit tests pass: `npm test` (helper: `/` protected; `/auth/signin` and `/api/auth/signin` not; `/recipes/new` protected; `/dashboard` not) — 8508d33
+- [x] 1.2 Linting passes: `npm run lint` — 8508d33
+- [x] 1.3 Production build passes: `npm run build` — 8508d33
 
 #### Manual
 
-- [x] 1.4 Signed in: `/` shows ranked recipes, invite code, email greeting (former dashboard content)
-- [x] 1.5 Signed out: `/` redirects to `/auth/signin` with no loop; `/auth/signin` and `/auth/signup` still render
-- [x] 1.6 Sign in lands on `/`; join success lands on `/`; sign out lands on `/auth/signin`
-- [x] 1.7 `/dashboard` is 404 for both signed-in and signed-out
-- [x] 1.8 Welcome / “10x Astro Starterr” is gone
+- [x] 1.4 Signed in: `/` shows ranked recipes, invite code, email greeting (former dashboard content) — 8508d33
+- [x] 1.5 Signed out: `/` redirects to `/auth/signin` with no loop; `/auth/signin` and `/auth/signup` still render — 8508d33
+- [x] 1.6 Sign in lands on `/`; join success lands on `/`; sign out lands on `/auth/signin` — 8508d33
+- [x] 1.7 `/dashboard` is 404 for both signed-in and signed-out — 8508d33
+- [x] 1.8 Welcome / “10x Astro Starterr” is gone — 8508d33
 
 ### Phase 2: Signed-in top bar
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Production build passes: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Top bar on `/`, `/pantry`, `/recipes`, `/recipes/new`, `/recipes/:id`, `/join`: email + Home + Pantry + Recipes + Sign out
-- [ ] 2.5 No top bar on `/auth/signin`, `/auth/signup`, `/auth/confirm-email`
-- [ ] 2.6 Household card has no second sign-out and no pantry/recipes links; Join remains
-- [ ] 2.7 Pantry and recipes list have no “back to dashboard” footer
-- [ ] 2.8 Home in the bar goes to `/` and shows the ranked list
+- [x] 2.4 Top bar on `/`, `/pantry`, `/recipes`, `/recipes/new`, `/recipes/:id`, `/join`: email + Home + Pantry + Recipes + Sign out
+- [x] 2.5 No top bar on `/auth/signin`, `/auth/signup`, `/auth/confirm-email`
+- [x] 2.6 Household card has no second sign-out and no pantry/recipes links; Join remains
+- [x] 2.7 Pantry and recipes list have no “back to dashboard” footer
+- [x] 2.8 Home in the bar goes to `/` and shows the ranked list

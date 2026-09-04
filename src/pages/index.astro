@@ -39,52 +39,40 @@ if (supabase && householdId) {
 }
 ---
 
-<Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
-      >
-        Dashboard
-      </h1>
-      <p class="text-center text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
+<Layout title="Dashboard" showTopbar>
+  <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+    <h1
+      class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+    >
+      Dashboard
+    </h1>
+    <p class="text-center text-blue-100/80">
+      Welcome, <span class="font-semibold text-white">{user?.email}</span>
+    </p>
+    {
+      householdLoadError ? (
+        <p class="mt-4 text-center text-sm text-red-300">Could not load household</p>
+      ) : inviteCode ? (
+        <p class="mt-4 text-center text-sm text-blue-100/80">
+          Invite code: <code class="font-mono break-all text-white">{inviteCode}</code>
+        </p>
+      ) : (
+        <p class="mt-4 text-center text-sm text-blue-100/50">No household</p>
+      )
+    }
+
+    <div class="mt-6">
       {
-        householdLoadError ? (
-          <p class="mt-4 text-center text-sm text-red-300">Could not load household</p>
-        ) : inviteCode ? (
-          <p class="mt-4 text-center text-sm text-blue-100/80">
-            Invite code: <code class="font-mono break-all text-white">{inviteCode}</code>
-          </p>
+        !householdId ? (
+          <p class="text-center text-sm text-blue-100/50">No household found.</p>
         ) : (
-          <p class="mt-4 text-center text-sm text-blue-100/50">No household</p>
+          <MatchList initialMatches={matches} loadError={matchesLoadError} client:load />
         )
       }
-
-      <div class="mt-6">
-        {
-          !householdId ? (
-            <p class="text-center text-sm text-blue-100/50">No household found.</p>
-          ) : (
-            <MatchList initialMatches={matches} loadError={matchesLoadError} client:load />
-          )
-        }
-      </div>
-
-      <div class="mt-6 flex flex-col items-center gap-2 text-center">
-        <a href="/pantry" class="text-purple-300 hover:underline">Open pantry</a>
-        <a href="/recipes" class="text-purple-300 hover:underline">Open recipes</a>
-        <a href="/join" class="text-sm text-blue-100/60 hover:underline">Join another household</a>
-      </div>
-      <form method="POST" action="/api/auth/signout" class="mt-6 text-center">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
     </div>
+
+    <p class="mt-6 text-center text-sm text-blue-100/60">
+      <a href="/join" class="text-blue-100/60 hover:underline">Join another household</a>
+    </p>
   </div>
 </Layout>

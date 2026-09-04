@@ -22,28 +22,22 @@ if (!supabase && householdId) {
 }
 ---
 
-<Layout title="Recipes">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
-      >
-        Recipes
-      </h1>
+<Layout title="Recipes" showTopbar>
+  <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+    <h1
+      class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+    >
+      Recipes
+    </h1>
 
-      {
-        !householdId ? (
-          <p class="text-center text-sm text-blue-100/50">No household found.</p>
-        ) : loadError ? (
-          <p class="text-center text-sm text-red-300">Could not load recipes.</p>
-        ) : (
-          <RecipeList initialRecipes={recipes} client:load />
-        )
-      }
-
-      <p class="mt-6 text-center text-sm text-blue-100/60">
-        <a href="/" class="text-purple-300 hover:underline">Back to home</a>
-      </p>
-    </div>
+    {
+      !householdId ? (
+        <p class="text-center text-sm text-blue-100/50">No household found.</p>
+      ) : loadError ? (
+        <p class="text-center text-sm text-red-300">Could not load recipes.</p>
+      ) : (
+        <RecipeList initialRecipes={recipes} client:load />
+      )
+    }
   </div>
 </Layout>
