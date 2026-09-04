@@ -46,7 +46,8 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 | S-01 | pantry-management       | see and edit household pantry contents                  | F-01          | US-02, FR-002, FR-003                 | done     |
 | S-02 | recipe-management       | add, edit, and delete recipes with ingredient lists     | F-01          | US-04, FR-005                         | done     |
 | S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | in-progress |
-| S-04 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01          | US-03, FR-007, FR-008                 | proposed |
+| S-04 | change-homepage         | use the dashboard at / with a user nav top bar          | F-01          | —                                     | proposed |
+| S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | proposed |
 
 
 ## Streams
@@ -58,7 +59,8 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ----------------- | ------------------------ | --------------------------------------------------------------- |
 | A      | Pantry → matching | `F-01` → `S-01` → `S-03` | Main path to north star; `S-03` also requires `S-02` (joins B). |
 | B      | Recipe management | `S-02`                   | Joins Stream A at `S-03`.                                       |
-| C      | Data freshness    | `S-04`                   | Depends on `S-01` (Stream A).                                   |
+| C      | Homepage          | `S-04`                   | Depends on `F-01`. Sequence before `S-05`.                      |
+| D      | Data freshness    | `S-01` → `S-05`          | After `S-04` so the nudge lands on `/`.                         |
 
 
 ## Baseline
@@ -79,7 +81,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Outcome:** (foundation) Household model landed in Supabase — `households` and `household_members` tables with RLS policies enforcing per-household data isolation; new users auto-assigned to a household on signup.
 - **Change ID:** household-data-scaffold
 - **PRD refs:** US-01, FR-001, NFR-01 (household data isolation), Access Control (household sharing)
-- **Unlocks:** S-01, S-02, S-03, S-04
+- **Unlocks:** S-01, S-02, S-03, S-04, S-05
 - **Prerequisites:** —
 - **Parallel with:** —
 - **Blockers:** —
@@ -98,7 +100,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Parallel with:** S-02
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Pantry UX must be fast enough for "standing in front of the fridge" moments; if editing is cumbersome, users won't maintain accurate inventory. Sequenced early because the north star (S-03) and stale-reminder (S-04) both depend on it.
+- **Risk:** Pantry UX must be fast enough for "standing in front of the fridge" moments; if editing is cumbersome, users won't maintain accurate inventory. Sequenced early because the north star (S-03) and stale-reminder (S-05) both depend on it.
 - **Status:** done
 
 ### S-02: Recipe management
@@ -125,16 +127,28 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Risk:** This is the north star — if ingredient-overlap matching produces unhelpful rankings, the core hypothesis fails. The matching algorithm (described in PRD §Business Logic) is straightforward overlap scoring, but edge cases (partial matches, ingredient quantities) may need iteration. Sequenced as early as prerequisites allow.
 - **Status:** in-progress
 
-### S-04: Stale pantry reminder
+### S-04: Change homepage
+
+- **Outcome:** The dashboard is the homepage at `/` (not the starter landing) and shows the top bar with the signed-in user’s name and navigation.
+- **Change ID:** change-homepage
+- **PRD refs:** —
+- **Prerequisites:** F-01
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Relocating the household page rewrites routing and `/dashboard` links; do not add `"/"` to `PROTECTED_ROUTES` as a prefix match. Sequence before S-05 so the reminder mounts on `/`.
+- **Status:** proposed
+
+### S-05: Stale pantry reminder
 
 - **Outcome:** User sees when the household pantry was last updated; when 7+ days have passed without an edit, a non-blocking reminder encourages a pantry review.
 - **Change ID:** stale-pantry-reminder
 - **PRD refs:** US-03 (stale pantry reminder), FR-007 (last-updated visibility), FR-008 (7-day nudge)
-- **Prerequisites:** S-01
-- **Parallel with:** S-03
+- **Prerequisites:** S-01, S-04
+- **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Low-risk slice; main concern is that the reminder must be non-blocking (not a modal or hard gate). Sequenced after S-01 because it reads pantry timestamps; parallel with S-03 since they share no data dependency.
+- **Risk:** Low-risk slice; main concern is that the reminder must be non-blocking (not a modal or hard gate). Sequenced after S-04 because the household page moves to `/`.
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -146,7 +160,8 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 | S-01       | #2     | pantry-management       | Pantry view and edit                     | no                    | Needs F-01 done first                   |
 | S-02       | #3     | recipe-management       | Recipe CRUD with ingredient lists        | no                    | Needs F-01 done first                   |
 | S-03       | #4     | pantry-recipe-matching  | Recipe matching ranked by pantry overlap | no                    | Needs S-01 + S-02 done                  |
-| S-04       | #5     | stale-pantry-reminder   | Stale pantry reminder (7-day nudge)      | no                    | Needs S-01 done                         |
+| S-04       | —      | change-homepage         | Dashboard homepage at / with top bar     | yes                   | F-01 done; no GitHub issue yet          |
+| S-05       | #5     | stale-pantry-reminder   | Stale pantry reminder (7-day nudge)      | no                    | Needs S-04 done first                   |
 
 
 ## Open Roadmap Questions

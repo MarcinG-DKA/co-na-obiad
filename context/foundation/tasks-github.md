@@ -31,9 +31,10 @@ Snapshot of the M-1 roadmap as GitHub Issues on [MarcinG-DKA/co-na-obiad](https:
 | S-01 | [#2 Pantry view and edit](https://github.com/MarcinG-DKA/co-na-obiad/issues/2) | `pantry-management` | proposed | #1 |
 | S-02 | [#3 Recipe CRUD with ingredient lists](https://github.com/MarcinG-DKA/co-na-obiad/issues/3) | `recipe-management` | proposed | #1 |
 | S-03 | [#4 Recipe matching ranked by pantry overlap](https://github.com/MarcinG-DKA/co-na-obiad/issues/4) | `pantry-recipe-matching` | proposed (north star) | #2, #3 |
-| S-04 | [#5 Stale pantry reminder (7-day nudge)](https://github.com/MarcinG-DKA/co-na-obiad/issues/5) | `stale-pantry-reminder` | proposed | #2 |
+| S-04 | — | `change-homepage` | proposed | F-01 |
+| S-05 | [#5 Stale pantry reminder (7-day nudge)](https://github.com/MarcinG-DKA/co-na-obiad/issues/5) | `stale-pantry-reminder` | proposed | #2, S-04 |
 
-S-01 and S-02 can run in parallel after F-01. S-03 is the north star — the smallest end-to-end slice that proves inventory-first matching. S-04 is parallel with S-03 after S-01.
+S-01 and S-02 can run in parallel after F-01. S-03 is the north star — the smallest end-to-end slice that proves inventory-first matching. S-04 (dashboard at `/`) comes next; S-05 follows S-04.
 
 ## Parked issues (no milestone)
 
