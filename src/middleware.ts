@@ -1,13 +1,12 @@
 import { defineMiddleware } from "astro:middleware";
 import { createClient } from "@/lib/supabase";
+import { isProtectedPath } from "@/lib/protected-routes";
 import {
   CURRENT_HOUSEHOLD_COOKIE,
   householdCookieOptions,
   listMemberships,
   resolveHouseholdId,
 } from "@/lib/services/household";
-
-export const PROTECTED_ROUTES = ["/dashboard", "/join", "/pantry", "/recipes"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const responseHeaders = new Headers();
@@ -39,10 +38,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  if (PROTECTED_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
-    if (!context.locals.user) {
-      return context.redirect("/auth/signin");
-    }
+  if (isProtectedPath(context.url.pathname) && !context.locals.user) {
+    return context.redirect("/auth/signin");
   }
 
   const response = await next();

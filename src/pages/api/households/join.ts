@@ -32,5 +32,5 @@ export const POST: APIRoute = async (context) => {
   }
 
   context.cookies.set(CURRENT_HOUSEHOLD_COOKIE, householdId, householdCookieOptions(context.url));
-  return context.redirect("/dashboard");
+  return context.redirect("/");
 };

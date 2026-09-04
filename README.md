@@ -144,9 +144,9 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/auth/signin`        | Email/password sign-in form                                             |
 | `/auth/signup`        | Email/password sign-up form                                             |
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| `/`                   | Household page (ranked recipes; redirects to `/auth/signin` if unauthenticated) |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Route protection is handled in `src/middleware.ts` via `isProtectedPath` (`src/lib/protected-routes.ts`). `/` is exact-match only; `/join`, `/pantry`, and `/recipes` use prefix matching. Do not add `"/"` to a `startsWith` list.
 
 ## Deployment
 

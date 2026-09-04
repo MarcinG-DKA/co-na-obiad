@@ -1,8 +1,90 @@
 ---
-import Welcome from "@/components/Welcome.astro";
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { listMatches } from "@/lib/services/matching";
+import type { RecipeMatch } from "@/lib/services/matching";
+import MatchList from "@/components/matches/MatchList";
+
+const { user, householdId } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let inviteCode: string | null = null;
+let householdLoadError = false;
+let matches: RecipeMatch[] = [];
+let matchesLoadError = false;
+
+if (supabase && householdId) {
+  const [householdResult, matchesResult] = await Promise.allSettled([
+    supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle(),
+    listMatches(supabase, householdId),
+  ]);
+
+  if (householdResult.status === "fulfilled") {
+    if (householdResult.value.error) {
+      householdLoadError = true;
+    } else {
+      inviteCode = householdResult.value.data?.invite_code ?? null;
+    }
+  } else {
+    householdLoadError = true;
+  }
+
+  if (matchesResult.status === "fulfilled") {
+    matches = matchesResult.value;
+  } else {
+    matchesLoadError = true;
+  }
+} else if (!supabase && householdId) {
+  matchesLoadError = true;
+}
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Dashboard">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        Dashboard
+      </h1>
+      <p class="text-center text-blue-100/80">
+        Welcome, <span class="font-semibold text-white">{user?.email}</span>
+      </p>
+      {
+        householdLoadError ? (
+          <p class="mt-4 text-center text-sm text-red-300">Could not load household</p>
+        ) : inviteCode ? (
+          <p class="mt-4 text-center text-sm text-blue-100/80">
+            Invite code: <code class="font-mono break-all text-white">{inviteCode}</code>
+          </p>
+        ) : (
+          <p class="mt-4 text-center text-sm text-blue-100/50">No household</p>
+        )
+      }
+
+      <div class="mt-6">
+        {
+          !householdId ? (
+            <p class="text-center text-sm text-blue-100/50">No household found.</p>
+          ) : (
+            <MatchList initialMatches={matches} loadError={matchesLoadError} client:load />
+          )
+        }
+      </div>
+
+      <div class="mt-6 flex flex-col items-center gap-2 text-center">
+        <a href="/pantry" class="text-purple-300 hover:underline">Open pantry</a>
+        <a href="/recipes" class="text-purple-300 hover:underline">Open recipes</a>
+        <a href="/join" class="text-sm text-blue-100/60 hover:underline">Join another household</a>
+      </div>
+      <form method="POST" action="/api/auth/signout" class="mt-6 text-center">
+        <button
+          type="submit"
+          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+        >
+          Sign out
+        </button>
+      </form>
+    </div>
+  </div>
 </Layout>
