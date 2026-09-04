@@ -248,14 +248,14 @@ No data migration. Bookmarks to `/dashboard` 404 by design. Update any personal 
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Production build passes: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test` — 907eb99
+- [x] 2.2 Linting passes: `npm run lint` — 907eb99
+- [x] 2.3 Production build passes: `npm run build` — 907eb99
 
 #### Manual
 
-- [x] 2.4 Top bar on `/`, `/pantry`, `/recipes`, `/recipes/new`, `/recipes/:id`, `/join`: email + Home + Pantry + Recipes + Sign out
-- [x] 2.5 No top bar on `/auth/signin`, `/auth/signup`, `/auth/confirm-email`
-- [x] 2.6 Household card has no second sign-out and no pantry/recipes links; Join remains
-- [x] 2.7 Pantry and recipes list have no “back to dashboard” footer
-- [x] 2.8 Home in the bar goes to `/` and shows the ranked list
+- [x] 2.4 Top bar on `/`, `/pantry`, `/recipes`, `/recipes/new`, `/recipes/:id`, `/join`: email + Home + Pantry + Recipes + Sign out — 907eb99
+- [x] 2.5 No top bar on `/auth/signin`, `/auth/signup`, `/auth/confirm-email` — 907eb99
+- [x] 2.6 Household card has no second sign-out and no pantry/recipes links; Join remains — 907eb99
+- [x] 2.7 Pantry and recipes list have no “back to dashboard” footer — 907eb99
+- [x] 2.8 Home in the bar goes to `/` and shows the ranked list — 907eb99
