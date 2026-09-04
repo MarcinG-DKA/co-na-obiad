@@ -259,7 +259,7 @@ Note: The Builds API requires a separately-scoped API token ("Workers Builds: Ed
 npm run tail
 # or with filters:
 npx wrangler tail --format json --status error
-npx wrangler tail --format json --search "GET /dashboard"
+npx wrangler tail --format json --search "GET /"
 ```
 
 **List deployed versions:**
