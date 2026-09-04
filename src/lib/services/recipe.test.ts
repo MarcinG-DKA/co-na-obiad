@@ -1,4 +1,11 @@
-import { getRecipe, listRecipes, RecipeNotFoundError, removeRecipe, saveRecipe } from "@/lib/services/recipe";
+import {
+  getRecipe,
+  listRecipes,
+  listRecipesWithIngredients,
+  RecipeNotFoundError,
+  removeRecipe,
+  saveRecipe,
+} from "@/lib/services/recipe";
 import type { Database } from "@/db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -126,6 +133,45 @@ describe("listRecipes", () => {
   it("throws on a PostgREST error instead of returning []", async () => {
     const { client } = createClient({ data: null, error: { message: "boom" } });
     await expect(listRecipes(client, "hh-1")).rejects.toThrow("boom");
+  });
+});
+
+const matchRow = {
+  id: "recipe-1",
+  title: "Soup",
+  recipe_ingredients: [
+    { name: "salt", quantity: null, unit: null, position: 1 },
+    { name: "water", quantity: 200, unit: "ml", position: 0 },
+  ],
+};
+
+describe("listRecipesWithIngredients", () => {
+  it("returns titles with ingredient names ordered by position", async () => {
+    const { client, from, query } = createClient({ data: [matchRow], error: null });
+    await expect(listRecipesWithIngredients(client, "hh-1")).resolves.toEqual([
+      {
+        id: "recipe-1",
+        title: "Soup",
+        ingredients: [
+          { name: "water", quantity: 200, unit: "ml" },
+          { name: "salt", quantity: null, unit: null },
+        ],
+      },
+    ]);
+    expect(from).toHaveBeenCalledWith("recipes");
+    expect(query.eq).toHaveBeenCalledWith("household_id", "hh-1");
+    expect(query.order).toHaveBeenCalledWith("created_at", { ascending: true });
+    expect(query.order).toHaveBeenCalledWith("position", { referencedTable: "recipe_ingredients", ascending: true });
+  });
+
+  it("returns [] when there are no recipes", async () => {
+    const { client } = createClient({ data: [], error: null });
+    await expect(listRecipesWithIngredients(client, "hh-1")).resolves.toEqual([]);
+  });
+
+  it("throws on a PostgREST error instead of returning []", async () => {
+    const { client } = createClient({ data: null, error: { message: "boom" } });
+    await expect(listRecipesWithIngredients(client, "hh-1")).rejects.toThrow("boom");
   });
 });
 
