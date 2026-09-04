@@ -3,7 +3,7 @@ project: Co na obiad?
 version: 1
 status: draft
 created: 2026-08-31
-updated: 2026-09-03
+updated: 2026-09-04
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -45,7 +45,7 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 | F-01 | household-data-scaffold | (foundation) household model and RLS isolation in place | —             | US-01, FR-001, NFR-01, Access Control | done     |
 | S-01 | pantry-management       | see and edit household pantry contents                  | F-01          | US-02, FR-002, FR-003                 | done     |
 | S-02 | recipe-management       | add, edit, and delete recipes with ingredient lists     | F-01          | US-04, FR-005                         | done     |
-| S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | in-progress |
+| S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | done     |
 | S-04 | change-homepage         | use the dashboard at / with a user nav top bar          | F-01          | —                                     | proposed |
 | S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | proposed |
 
@@ -125,7 +125,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** This is the north star — if ingredient-overlap matching produces unhelpful rankings, the core hypothesis fails. The matching algorithm (described in PRD §Business Logic) is straightforward overlap scoring, but edge cases (partial matches, ingredient quantities) may need iteration. Sequenced as early as prerequisites allow.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-04: Change homepage
 
@@ -186,4 +186,5 @@ _(Empty — this is the first milestone.)_
 - **F-01: (foundation) Household model landed in Supabase — `households` and `household_members` tables with RLS policies enforcing per-household data isolation; new users auto-assigned to a household on signup.** — Archived 2026-09-02 → `context/archive/2026-09-01-household-data-scaffold/`. Lesson: —.
 - **S-01: User can see the household pantry contents and add, edit, or remove items.** — Archived 2026-09-02 → `context/archive/2026-09-02-pantry-management/`. Lesson: —.
 - **S-02: User can add, edit, and delete recipes with ingredient lists in the household library.** — Archived 2026-09-02 → `context/archive/2026-09-02-recipe-management/`. Lesson: —.
+- **S-03: User sees saved recipes ranked by how well they match the household's current pantry; editing pantry contents re-ranks the list.** — Archived 2026-09-04 → `context/archive/2026-09-03-pantry-recipe-matching/`. Lesson: —.
 
