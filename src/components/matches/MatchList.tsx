@@ -113,7 +113,10 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
               <span className={cn("shrink-0 text-sm font-medium", scorePercentClass(percent))}>{percent}%</span>
             </a>
             {match.missingNames.length > 0 ? (
-              <p className="mt-1 text-sm text-blue-100/50">Missing: {match.missingNames.join(", ")}</p>
+              <p className="mt-1 text-sm text-red-300">Missing: {match.missingNames.join(", ")}</p>
+            ) : null}
+            {match.checkNames.length > 0 ? (
+              <p className="mt-1 text-sm text-orange-300">Check: {match.checkNames.join(", ")}</p>
             ) : null}
           </li>
         );

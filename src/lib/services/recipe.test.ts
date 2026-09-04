@@ -140,8 +140,8 @@ const matchRow = {
   id: "recipe-1",
   title: "Soup",
   recipe_ingredients: [
-    { name: "salt", position: 1 },
-    { name: "water", position: 0 },
+    { name: "salt", quantity: null, unit: null, position: 1 },
+    { name: "water", quantity: 200, unit: "ml", position: 0 },
   ],
 };
 
@@ -152,7 +152,10 @@ describe("listRecipesWithIngredients", () => {
       {
         id: "recipe-1",
         title: "Soup",
-        ingredients: [{ name: "water" }, { name: "salt" }],
+        ingredients: [
+          { name: "water", quantity: 200, unit: "ml" },
+          { name: "salt", quantity: null, unit: null },
+        ],
       },
     ]);
     expect(from).toHaveBeenCalledWith("recipes");

@@ -25,6 +25,7 @@ const sampleMatch = {
   score: 0.5,
   matchedNames: ["eggs"],
   missingNames: ["salt"],
+  checkNames: [],
 };
 
 function context(

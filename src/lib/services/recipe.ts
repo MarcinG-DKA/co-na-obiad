@@ -6,7 +6,7 @@ type AppSupabaseClient = SupabaseClient<Database>;
 const RECIPE_LIST_SELECT = "id, household_id, title, created_at, updated_at, recipe_ingredients(count)";
 const RECIPE_DETAIL_SELECT =
   "id, household_id, title, steps, created_at, updated_at, recipe_ingredients(id, name, quantity, unit, position, created_at, updated_at)";
-const RECIPE_MATCH_SELECT = "id, title, recipe_ingredients(name, position)";
+const RECIPE_MATCH_SELECT = "id, title, recipe_ingredients(name, quantity, unit, position)";
 
 export class RecipeNotFoundError extends Error {
   constructor() {
@@ -47,7 +47,7 @@ export interface Recipe {
 export interface RecipeWithIngredientNames {
   id: string;
   title: string;
-  ingredients: { name: string }[];
+  ingredients: { name: string; quantity?: number | null; unit?: string | null }[];
 }
 
 export interface SaveRecipeInput {
@@ -82,7 +82,7 @@ interface RecipeDetailRow {
 interface RecipeMatchRow {
   id: string;
   title: string;
-  recipe_ingredients: { name: string; position: number }[] | null;
+  recipe_ingredients: { name: string; quantity: number | null; unit: string | null; position: number }[] | null;
 }
 
 function mapListItem(row: RecipeListRow): RecipeListItem {
@@ -112,7 +112,11 @@ function mapRecipe(row: RecipeDetailRow): Recipe {
 function mapRecipeWithIngredientNames(row: RecipeMatchRow): RecipeWithIngredientNames {
   const ingredients = [...(row.recipe_ingredients ?? [])]
     .sort((a, b) => a.position - b.position)
-    .map((ingredient) => ({ name: ingredient.name }));
+    .map((ingredient) => ({
+      name: ingredient.name,
+      quantity: ingredient.quantity ?? null,
+      unit: ingredient.unit ?? null,
+    }));
   return {
     id: row.id,
     title: row.title,
