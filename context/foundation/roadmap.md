@@ -47,7 +47,7 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 | S-02 | recipe-management       | add, edit, and delete recipes with ingredient lists     | F-01          | US-04, FR-005                         | done     |
 | S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | done     |
 | S-04 | change-homepage         | use the dashboard at / with a user nav top bar          | F-01          | —                                     | done     |
-| S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | in-progress |
+| S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | done     |
 
 
 ## Streams
@@ -148,7 +148,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low-risk slice; main concern is that the reminder must be non-blocking (not a modal or hard gate). Sequenced after S-04 because the household page moves to `/`.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -187,4 +187,5 @@ _(Empty — this is the first milestone.)_
 - **S-02: User can add, edit, and delete recipes with ingredient lists in the household library.** — Archived 2026-09-02 → `context/archive/2026-09-02-recipe-management/`. Lesson: —.
 - **S-03: User sees saved recipes ranked by how well they match the household's current pantry; editing pantry contents re-ranks the list.** — Archived 2026-09-04 → `context/archive/2026-09-03-pantry-recipe-matching/`. Lesson: —.
 - **S-04: The dashboard is the homepage at `/` (not the starter landing) and shows the top bar with the signed-in user’s name and navigation.** — Archived 2026-09-04 → `context/archive/2026-09-04-change-homepage/`. Lesson: —.
+- **S-05: User sees when the household pantry was last updated; when 7+ days have passed without an edit, a non-blocking reminder encourages a pantry review.** — Archived 2026-09-07 → `context/archive/2026-09-07-stale-pantry-reminder/`. Lesson: —.
 
