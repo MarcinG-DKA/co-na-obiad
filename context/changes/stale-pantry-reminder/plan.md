@@ -6,7 +6,7 @@ Show when the household pantry was last updated on `/`, and when that time is 7+
 
 ## Current State Analysis
 
-Pantry rows already store `created_at` / `updated_at` (`supabase/migrations/20260902111000_pantry_items.sql`). `updated_at` defaults to `now()` on INSERT and is bumped by a BEFORE UPDATE trigger. There is no household-level last-updated column, no `MAX(updated_at)` query, and no UI copy about freshness.
+Pantry rows already store `created_at` / `updated_at` (`supabase/migrations/20260902111000_pantry_items.sql`). `updated_at` defaults to `now()` on INSERT and is bumped by a BEFORE UPDATE trigger. There is no household-level last-updated column, no `MIN(updated_at)` query, and no UI copy about freshness.
 
 `/` (`src/pages/index.astro`) SSR-loads invite code + `listMatches` and mounts `MatchList`. It does not render pantry contents or a `/pantry` CTA (Topbar is the only nav). `MatchList` refetches `GET /api/matches` on `pageshow` (bfcache) and `visibilitychange` so returning from `/pantry` re-ranks without a dedicated matches UI on the pantry page.
 
@@ -16,9 +16,9 @@ Pantry rows already store `created_at` / `updated_at` (`supabase/migrations/2026
 
 A logged-in household member on `/` can:
 
-- Always see a last-updated line when the pantry has items, in relative English (“Updated today”, “Updated 1 day ago”, “Updated 12 days ago”).
+- Always see a last-updated line when the pantry has items, in relative English (“Oldest item updated today”, “Oldest item updated 1 day ago”, “Oldest item updated 12 days ago”).
 - See “Pantry is empty.” instead of a date when there are no items — and **not** see the 7-day inaccuracy nudge.
-- When the latest item `updated_at` is 7+ elapsed days old, see an inline notice above the match list that matches may be inaccurate, with a link to `/pantry`. The notice stays until the pantry is updated; it is not dismissible and is not a modal.
+- When the oldest item `updated_at` is 7+ elapsed days old, see an inline notice above the match list that matches may be inaccurate, with a link to `/pantry`. The notice stays until that oldest row is updated or removed; it is not dismissible and is not a modal.
 - See that notice even if the recipe library is empty or matches failed to load.
 - After reviewing pantry and coming back to `/`, see last-updated / nudge update without a full page reload (same visibility/pageshow refetch idea as `MatchList`).
 
@@ -35,11 +35,11 @@ A logged-in household member on `/` can:
 
 ## What We're NOT Doing
 
-- A `households.pantry_last_updated_at` (or similar) column — last-updated is `MAX(pantry_items.updated_at)` on read.
-- Last-updated or nudge on `/pantry` (or any page other than `/`).
+- A `households.pantry_last_updated_at` (or similar) column — last-updated is `MIN(pantry_items.updated_at)` on read (oldest item).
+- Last-updated household line or homepage-style inaccuracy nudge on `/pantry` (or any page other than `/`). Per-item “Needs review” on stale `/pantry` rows is in scope.
 - Dismiss control, session storage, or persisted “don’t show again”.
 - Modal, hard gate, toast-as-the-nudge, or reusing `Banner.astro` for this notice.
-- Treating DELETE as a pantry update (deletes do not bump remaining rows’ `updated_at`; accepted tradeoff of MAX-on-read).
+- Treating a DELETE of a non-oldest row as a pantry refresh (remaining rows’ `updated_at` are unchanged; deleting the oldest row does move last-updated to the next-oldest).
 - Calendar-day / local-timezone “days”; expiry dates; email/push notifications.
 - Changing matching, `MatchList` scoring, or the `/api/matches` payload.
 - Playwright / React Testing Library — Jest at helper + service + API; UI is manual.
@@ -49,13 +49,13 @@ A logged-in household member on `/` can:
 
 Two sequential phases: **pure freshness rules + lightweight read + JSON GET**, then **homepage island**.
 
-`evaluatePantryFreshness` / relative copy are pure functions with `now` injected (Jest, no Supabase). The DB read is one household-scoped `updated_at` ordered desc, limit 1 — not `listPantryItems`. `GET /api/pantry/freshness` returns that timestamp (or null if empty). `/` SSR-seeds a small React island above `MatchList`; the island refetches the freshness endpoint on the same visibility events as matches, independently.
+`evaluatePantryFreshness` / relative copy are pure functions with `now` injected (Jest, no Supabase). The DB read is one household-scoped `updated_at` ordered asc, limit 1 — not `listPantryItems`. `GET /api/pantry/freshness` returns that timestamp (or null if empty). `/` SSR-seeds a small React island above `MatchList`; the island refetches the freshness endpoint on the same visibility events as matches, independently.
 
 ## Critical Implementation Details
 
 ### Elapsed 7×24h, not calendar dates
 
-Stale means `now - lastUpdatedAt >= 7 * 24 * 60 * 60 * 1000` (168 hours). Relative copy uses the same elapsed buckets (`floor` of 24-hour periods): 0 → “Updated today”, 1 → “Updated 1 day ago”, n → “Updated n days ago”. Clamp elapsed ms to `≥ 0` before flooring so a future timestamp cannot print a negative day count. Do not use local calendar dates or `Intl.RelativeTimeFormat` (no date library in `package.json`).
+Stale means `now - lastUpdatedAt >= 7 * 24 * 60 * 60 * 1000` (168 hours). Relative copy uses the same elapsed buckets (`floor` of 24-hour periods): 0 → “Oldest item updated today”, 1 → “Oldest item updated 1 day ago”, n → “Oldest item updated n days ago”. Clamp elapsed ms to `≥ 0` before flooring so a future timestamp cannot print a negative day count. Do not use local calendar dates or `Intl.RelativeTimeFormat` (no date library in `package.json`).
 
 ### Independent refetch, keep last good SSR data
 
@@ -64,6 +64,12 @@ Do not fold freshness into `GET /api/matches`. The island fetches `GET /api/pant
 ### Empty vs stale
 
 `lastUpdatedAt === null` means no pantry rows **only when the freshness load succeeded**. Show “Pantry is empty.” and `isStale === false` in that case. Never show the inaccuracy nudge for an empty pantry. A failed load (`loadError`) must not reuse the empty copy — that is the same class of bug as treating a DB/config error as “no rows”.
+
+### Addendum (2026-09-07) — oldest item, not newest
+
+Last-updated is `MIN(pantry_items.updated_at)` (order `updated_at` ascending, limit 1), not MAX / newest-first. Relative copy is “Oldest item updated today / 1 day ago / N days ago”. The 7-day nudge tracks the stalest row: editing a fresher item does not clear it; deleting the oldest row does change the dashboard timestamp. Progress 1.2 still says “newest” (checkbox titles are frozen); the implementation and tests mean oldest.
+
+Stale pantry items on `/pantry` show per-item copy “Updated N days ago. Needs review.” (`formatPantryItemNeedsReview`). There is still no household last-updated line and no homepage-style inaccuracy nudge on `/pantry`.
 
 ---
 
@@ -81,7 +87,7 @@ Lock the 7-day / empty / relative-copy rules in a pure module, add a last-update
 
 **Intent**: Own empty/stale/relative-copy so SSR, the API consumer, and the island share one definition of “7 days” and one English last-updated string.
 
-**Contract**: Export a stale threshold of 7 elapsed days in ms, `evaluatePantryFreshness(lastUpdatedAt: string | null, now: Date)` returning `{ lastUpdatedAt, isEmpty, isStale }`, and `formatPantryLastUpdated(freshness, now)` for the always-visible line. `null` last-updated → empty, not stale, copy “Pantry is empty.” Clamp elapsed ms to `≥ 0` before 24h bucketing so a future `updated_at` (clock skew) still formats as “Updated today”, never a negative day count. Colocated Jest covers empty, “today”, 1 day, 6d23h vs exactly 7d vs 8d, plural “days ago”, and `lastUpdatedAt` a few minutes after `now`.
+**Contract**: Export a stale threshold of 7 elapsed days in ms, `evaluatePantryFreshness(lastUpdatedAt: string | null, now: Date)` returning `{ lastUpdatedAt, isEmpty, isStale }`, and `formatPantryLastUpdated(freshness, now)` for the always-visible line. `null` last-updated → empty, not stale, copy “Pantry is empty.” Clamp elapsed ms to `≥ 0` before 24h bucketing so a future `updated_at` (clock skew) still formats as “Oldest item updated today”, never a negative day count. Colocated Jest covers empty, “today”, 1 day, 6d23h vs exactly 7d vs 8d, plural “days ago”, and `lastUpdatedAt` a few minutes after `now`.
 
 #### 2. Last-updated pantry read
 
@@ -89,7 +95,7 @@ Lock the 7-day / empty / relative-copy rules in a pure module, add a last-update
 
 **Intent**: Read household last-updated without loading every pantry item (homepage already pays for a full pantry load inside `listMatches`).
 
-**Contract**: Export `getPantryLastUpdatedAt(supabase, householdId): Promise<string | null>`. Query `pantry_items.updated_at` for that household, newest first, limit 1. Empty result → `null`. Throw on Supabase errors (same as `listPantryItems`). Extend the existing query-builder mock with `limit` / `maybeSingle` as needed.
+**Contract**: Export `getPantryLastUpdatedAt(supabase, householdId): Promise<string | null>`. Query `pantry_items.updated_at` for that household, oldest first, limit 1. Empty result → `null`. Throw on Supabase errors (same as `listPantryItems`). Extend the existing query-builder mock with `limit` / `maybeSingle` as needed.
 
 #### 3. Freshness JSON route
 
@@ -104,7 +110,7 @@ Lock the 7-day / empty / relative-copy rules in a pure module, add a last-update
 #### Automated Verification:
 
 - Freshness helper tests pass: `npm test` (empty, today, 1 day, 7-day boundary, relative copy, future `updated_at` clamped)
-- `getPantryLastUpdatedAt` tests pass: empty → `null`, newest `updated_at` returned, DB error throws
+- `getPantryLastUpdatedAt` tests pass: empty → `null`, oldest `updated_at` returned, DB error throws
 - `GET /api/pantry/freshness` tests pass: 401, 400, 500 unconfigured, 500 on throw, `{ lastUpdatedAt: null }`, `{ lastUpdatedAt: "<iso>" }`
 - Linting passes: `npm run lint`
 - Full suite passes: `npm test`
@@ -112,7 +118,7 @@ Lock the 7-day / empty / relative-copy rules in a pure module, add a last-update
 #### Manual Verification:
 
 - Authenticated `GET /api/pantry/freshness` on an empty pantry returns `{ data: { lastUpdatedAt: null } }`
-- After adding or editing an item, the same GET returns that item’s `updated_at`
+- After adding or editing an item, the same GET returns the household’s oldest `updated_at`
 - Unauthenticated GET returns 401
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
@@ -153,13 +159,13 @@ Put last-updated and the 7-day notice on `/` above the match list. SSR-seed from
 
 #### Manual Verification:
 
-- Pantry updated today: `/` shows “Updated today” (or “Updated 0…” never — must be “Updated today”); no inaccuracy notice
+- Pantry updated today: `/` shows “Oldest item updated today” (never “Updated 0…”); no inaccuracy notice
 - Pantry last updated 7+ days ago: last-updated line plus inline notice and working “Review pantry” link to `/pantry`; matches still visible
 - Empty pantry: “Pantry is empty.”; no 7-day notice
 - Empty recipe library (or matches load error) + stale pantry: notice still shows
-- After editing pantry, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload
+- After editing the oldest pantry item, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload
 - Freshness load failure: “Could not load pantry status.”; match list still renders
-- `/pantry` has no last-updated line and no 7-day notice
+- `/pantry` has no household last-updated line and no homepage-style 7-day nudge
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
 
@@ -169,8 +175,8 @@ Put last-updated and the 7-day notice on `/` above the match list. SSR-seed from
 
 ### Unit Tests:
 
-- `evaluatePantryFreshness` / `formatPantryLastUpdated` with injected `now`: empty, <24h, 24h–48h, just under 7d, exactly 7d, over 7d, and `lastUpdatedAt` slightly after `now` (clamp → “Updated today”, not stale).
-- `getPantryLastUpdatedAt`: no rows, one/newest row, thrown DB error.
+- `evaluatePantryFreshness` / `formatPantryLastUpdated` with injected `now`: empty, <24h, 24h–48h, just under 7d, exactly 7d, over 7d, and `lastUpdatedAt` slightly after `now` (clamp → “Oldest item updated today”, not stale).
+- `getPantryLastUpdatedAt`: no rows, one/oldest row, thrown DB error.
 - `GET /api/pantry/freshness`: auth/household/config/error/success (mock `@/lib/supabase` and the pantry service).
 
 ### Integration Tests:
@@ -180,10 +186,10 @@ None beyond the existing Jest API route tests. No Playwright in this slice.
 ### Manual Testing Steps:
 
 1. New household, empty pantry: open `/` — “Pantry is empty.”, no nudge, matches (if any) still listed at score 0.
-2. Add an item on `/pantry`, go Home: “Updated today”, no nudge.
+2. Add an item on `/pantry`, go Home: “Oldest item updated today”, no nudge.
 3. In Supabase (or by temporarily shortening the threshold in a local-only check), set `updated_at` 8 days back — nudge + link; click through to `/pantry`.
-4. Edit that item, return to `/` without a full reload — last-updated is today, nudge gone.
-5. Delete all items — “Pantry is empty.”, nudge gone (MAX-on-read: no leftover date).
+4. Edit that oldest item, return to `/` without a full reload — last-updated is today, nudge gone.
+5. Delete all items — “Pantry is empty.”, nudge gone (MIN-on-read: no leftover date).
 6. Disconnect network after first paint, switch tabs: last-updated stays; matches may toast as today.
 
 ## Performance Considerations
@@ -194,7 +200,7 @@ None beyond the existing Jest API route tests. No Playwright in this slice.
 
 ## Migration Notes
 
-No schema change. Existing `updated_at` values are the source of truth. Households that only delete items without later edits may still look stale — accepted.
+No schema change. Existing `updated_at` values are the source of truth. Households that only edit newer items (leaving an older row untouched) may still look stale — accepted.
 
 ## References
 
@@ -214,32 +220,32 @@ No schema change. Existing `updated_at` values are the source of truth. Househol
 
 #### Automated
 
-- [x] 1.1 Freshness helper tests pass: `npm test` (empty, today, 1 day, 7-day boundary, relative copy, future `updated_at` clamped)
-- [x] 1.2 `getPantryLastUpdatedAt` tests pass: empty → `null`, newest `updated_at` returned, DB error throws
-- [x] 1.3 `GET /api/pantry/freshness` tests pass: 401, 400, 500 unconfigured, 500 on throw, `{ lastUpdatedAt: null }`, `{ lastUpdatedAt: "<iso>" }`
-- [x] 1.4 Linting passes: `npm run lint`
-- [x] 1.5 Full suite passes: `npm test`
+- [x] 1.1 Freshness helper tests pass: `npm test` (empty, today, 1 day, 7-day boundary, relative copy, future `updated_at` clamped) — f4759cc
+- [x] 1.2 `getPantryLastUpdatedAt` tests pass: empty → `null`, newest `updated_at` returned, DB error throws — f4759cc
+- [x] 1.3 `GET /api/pantry/freshness` tests pass: 401, 400, 500 unconfigured, 500 on throw, `{ lastUpdatedAt: null }`, `{ lastUpdatedAt: "<iso>" }` — f4759cc
+- [x] 1.4 Linting passes: `npm run lint` — f4759cc
+- [x] 1.5 Full suite passes: `npm test` — f4759cc
 
 #### Manual
 
-- [x] 1.6 Authenticated `GET /api/pantry/freshness` on an empty pantry returns `{ data: { lastUpdatedAt: null } }`
-- [x] 1.7 After adding or editing an item, the same GET returns that item’s `updated_at`
-- [x] 1.8 Unauthenticated GET returns 401
+- [x] 1.6 Authenticated `GET /api/pantry/freshness` on an empty pantry returns `{ data: { lastUpdatedAt: null } }` — f4759cc
+- [x] 1.7 After adding or editing an item, the same GET returns that item’s `updated_at` — f4759cc
+- [x] 1.8 Unauthenticated GET returns 401 — f4759cc
 
 ### Phase 2: Homepage last-updated and nudge
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Production build passes: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Pantry updated today: `/` shows “Updated today”; no inaccuracy notice
-- [ ] 2.5 Pantry last updated 7+ days ago: last-updated line plus inline notice and working “Review pantry” link to `/pantry`; matches still visible
-- [ ] 2.6 Empty pantry: “Pantry is empty.”; no 7-day notice
-- [ ] 2.7 Empty recipe library (or matches load error) + stale pantry: notice still shows
-- [ ] 2.8 After editing pantry, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload
-- [ ] 2.9 Freshness load failure: “Could not load pantry status.”; match list still renders
-- [ ] 2.10 `/pantry` has no last-updated line and no 7-day notice
+- [x] 2.4 Pantry updated today: `/` shows “Updated today”; no inaccuracy notice
+- [x] 2.5 Pantry last updated 7+ days ago: last-updated line plus inline notice and working “Review pantry” link to `/pantry`; matches still visible
+- [x] 2.6 Empty pantry: “Pantry is empty.”; no 7-day notice
+- [x] 2.7 Empty recipe library (or matches load error) + stale pantry: notice still shows
+- [x] 2.8 After editing pantry, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload
+- [x] 2.9 Freshness load failure: “Could not load pantry status.”; match list still renders
+- [x] 2.10 `/pantry` has no household last-updated line and no homepage-style 7-day nudge

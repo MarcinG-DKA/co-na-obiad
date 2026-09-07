@@ -79,7 +79,7 @@ describe("GET /api/pantry/freshness", () => {
     expect(mockGetLastUpdated).toHaveBeenCalledWith(expect.anything(), "hh-1");
   });
 
-  it("returns the newest updated_at timestamp", async () => {
+  it("returns the oldest updated_at timestamp", async () => {
     mockGetLastUpdated.mockResolvedValue("2026-09-02T00:00:00Z");
     const { status, body } = await read(await GET(context()));
     expect(status).toBe(200);

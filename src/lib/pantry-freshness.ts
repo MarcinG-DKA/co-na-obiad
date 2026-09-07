@@ -11,6 +11,10 @@ function elapsedMs(lastUpdatedAt: string, now: Date): number {
   return Math.max(0, now.getTime() - Date.parse(lastUpdatedAt));
 }
 
+function elapsedDays(lastUpdatedAt: string, now: Date): number {
+  return Math.floor(elapsedMs(lastUpdatedAt, now) / DAY_MS);
+}
+
 export function evaluatePantryFreshness(lastUpdatedAt: string | null, now: Date): PantryFreshness {
   if (lastUpdatedAt === null) {
     return { lastUpdatedAt: null, isEmpty: true, isStale: false };
@@ -28,12 +32,22 @@ export function formatPantryLastUpdated(freshness: PantryFreshness, now: Date): 
     return "Pantry is empty.";
   }
 
-  const days = Math.floor(elapsedMs(freshness.lastUpdatedAt, now) / DAY_MS);
+  const days = elapsedDays(freshness.lastUpdatedAt, now);
   if (days === 0) {
-    return "Updated today";
+    return "Oldest item updated today";
   }
   if (days === 1) {
-    return "Updated 1 day ago";
+    return "Oldest item updated 1 day ago";
   }
-  return `Updated ${days} days ago`;
+  return `Oldest item updated ${days} days ago`;
+}
+
+export function formatPantryItemNeedsReview(updatedAt: string, now: Date): string | null {
+  if (!evaluatePantryFreshness(updatedAt, now).isStale) {
+    return null;
+  }
+
+  const days = elapsedDays(updatedAt, now);
+  const when = days === 1 ? "1 day ago" : `${days} days ago`;
+  return `Updated ${when}. Needs review.`;
 }

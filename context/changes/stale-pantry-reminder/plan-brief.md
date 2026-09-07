@@ -18,12 +18,12 @@ On `/`, a relative last-updated line is always visible when the pantry has items
 
 | Decision | Choice | Why |
 | --- | --- | --- |
-| Last-updated source | `MAX(pantry_items.updated_at)` on read | No migration; S-01 already stored `updated_at` for this |
+| Last-updated source | `MIN(pantry_items.updated_at)` on read | Nudge tracks the stalest item, not the latest edit |
 | Empty pantry | “Pantry is empty.”; no 7-day nudge | Empty is a clearer signal than “stale matches” |
-| Surfaces | `/` only | US-03 is the household page while viewing matches |
+| Surfaces | `/` household line + nudge; per-item review on `/pantry` | US-03 is matches on `/`; `/pantry` must show which rows are stale |
 | Nudge UI | Inline notice + `/pantry` link | Non-blocking; not a modal, toast, or layout Banner |
 | Dismiss | None — stays while stale | Simplest; pantry edit is the clear action |
-| Copy | Relative (“Updated today” / “N days ago”) | Fits a glance-in-the-kitchen homepage |
+| Copy | Relative (“Oldest item updated today” / “N days ago”) | Makes the MIN source obvious at a glance |
 | Nudge vs matches | Show even if library empty or matches failed | Freshness is independent of ranking |
 | Refresh | SSR + visibility refetch of `/api/pantry/freshness` | Same pattern as `MatchList`; keep last good data on refetch error |
 
@@ -31,11 +31,11 @@ On `/`, a relative last-updated line is always visible when the pantry has items
 
 **In scope:** Pure 7-day/empty/relative helpers; `getPantryLastUpdatedAt`; `GET /api/pantry/freshness`; homepage island; Jest for helper/service/API.
 
-**Out of scope:** Household column; `/pantry` freshness UI; dismiss; modal/Banner/toast-as-nudge; treating DELETE as an update; calendar-day TZ; matching API changes; Playwright; i18n.
+**Out of scope:** Household column; household last-updated / homepage-style nudge on `/pantry`; dismiss; modal/Banner/toast-as-nudge; treating a non-oldest DELETE as a refresh; calendar-day TZ; matching API changes; Playwright; i18n.
 
 ## Architecture / Approach
 
-Pure `pantry-freshness` module (injected `now`, 168-hour stale threshold). One `updated_at` desc/limit-1 query. JSON GET for the island. `/` loads freshness in parallel with matches; `PantryFreshness` sits above `MatchList` and refetches on `pageshow` / `visibilitychange` independently.
+Pure `pantry-freshness` module (injected `now`, 168-hour stale threshold). One `updated_at` asc/limit-1 query. JSON GET for the island. `/` loads freshness in parallel with matches; `PantryFreshness` sits above `MatchList` and refetches on `pageshow` / `visibilitychange` independently.
 
 ## Phases at a Glance
 
@@ -49,8 +49,8 @@ Pure `pantry-freshness` module (injected `now`, 168-hour stale threshold). One `
 
 ## Open Risks & Assumptions
 
-- Deletes do not refresh last-updated (MAX-on-read). Clearing the pantry becomes “empty”, not “updated just now”.
-- “Days” are elapsed 24h buckets, not local calendar dates — slightly less colloquial, much less TZ-buggy. Clamp negative elapsed (future `updated_at`) to “Updated today”.
+- Deletes of a non-oldest row do not refresh last-updated (MIN-on-read). Deleting the oldest row moves last-updated to the next-oldest. Clearing the pantry becomes “empty”, not “updated just now”.
+- “Days” are elapsed 24h buckets, not local calendar dates — slightly less colloquial, much less TZ-buggy. Clamp negative elapsed (future `updated_at`) to “Oldest item updated today”.
 - Around the exact 7-day instant, SSR and client clocks can disagree by seconds; acceptable at this scale.
 - `lastUpdatedAt === null` is empty pantry only after a successful freshness load; missing Supabase or a rejected query is `loadError`, not empty.
 
@@ -58,4 +58,4 @@ Pure `pantry-freshness` module (injected `now`, 168-hour stale threshold). One `
 
 - Cooks on `/` always see relative last-updated (or “Pantry is empty.”).
 - After 7+ days with items, a non-blocking notice + `/pantry` link appears; matches still work.
-- Editing pantry and returning to `/` updates the line and clears the notice without a full reload.
+- Editing the oldest pantry item and returning to `/` updates the line and clears the notice without a full reload.

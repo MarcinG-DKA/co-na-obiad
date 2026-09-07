@@ -118,12 +118,12 @@ describe("getPantryLastUpdatedAt", () => {
     expect(from).toHaveBeenCalledWith("pantry_items");
     expect(query.select).toHaveBeenCalledWith("updated_at");
     expect(query.eq).toHaveBeenCalledWith("household_id", "hh-1");
-    expect(query.order).toHaveBeenCalledWith("updated_at", { ascending: false });
+    expect(query.order).toHaveBeenCalledWith("updated_at", { ascending: true });
     expect(query.limit).toHaveBeenCalledWith(1);
     expect(query.maybeSingle).toHaveBeenCalled();
   });
 
-  it("returns the newest updated_at", async () => {
+  it("returns the oldest updated_at", async () => {
     const { client } = createClient({ data: { updated_at: "2026-09-02T00:00:00Z" }, error: null });
     await expect(getPantryLastUpdatedAt(client, "hh-1")).resolves.toBe("2026-09-02T00:00:00Z");
   });

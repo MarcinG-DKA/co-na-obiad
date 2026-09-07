@@ -3,7 +3,9 @@ import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
 import { listMatches } from "@/lib/services/matching";
 import type { RecipeMatch } from "@/lib/services/matching";
+import { getPantryLastUpdatedAt } from "@/lib/services/pantry";
 import MatchList from "@/components/matches/MatchList";
+import PantryFreshness from "@/components/pantry/PantryFreshness";
 
 const { user, householdId } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -12,11 +14,14 @@ let inviteCode: string | null = null;
 let householdLoadError = false;
 let matches: RecipeMatch[] = [];
 let matchesLoadError = false;
+let lastUpdatedAt: string | null = null;
+let freshnessLoadError = false;
 
 if (supabase && householdId) {
-  const [householdResult, matchesResult] = await Promise.allSettled([
+  const [householdResult, matchesResult, freshnessResult] = await Promise.allSettled([
     supabase.from("households").select("invite_code").eq("id", householdId).maybeSingle(),
     listMatches(supabase, householdId),
+    getPantryLastUpdatedAt(supabase, householdId),
   ]);
 
   if (householdResult.status === "fulfilled") {
@@ -34,8 +39,15 @@ if (supabase && householdId) {
   } else {
     matchesLoadError = true;
   }
+
+  if (freshnessResult.status === "fulfilled") {
+    lastUpdatedAt = freshnessResult.value;
+  } else {
+    freshnessLoadError = true;
+  }
 } else if (!supabase && householdId) {
   matchesLoadError = true;
+  freshnessLoadError = true;
 }
 ---
 
@@ -61,12 +73,15 @@ if (supabase && householdId) {
       )
     }
 
-    <div class="mt-6">
+    <div class="mt-6 space-y-2">
       {
         !householdId ? (
           <p class="text-center text-sm text-blue-100/50">No household found.</p>
         ) : (
-          <MatchList initialMatches={matches} loadError={matchesLoadError} client:load />
+          <>
+            <PantryFreshness initialLastUpdatedAt={lastUpdatedAt} loadError={freshnessLoadError} client:load />
+            <MatchList initialMatches={matches} loadError={matchesLoadError} client:load />
+          </>
         )
       }
     </div>
