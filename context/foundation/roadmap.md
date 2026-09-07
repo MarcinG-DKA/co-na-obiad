@@ -3,7 +3,7 @@ project: Co na obiad?
 version: 1
 status: draft
 created: 2026-08-31
-updated: 2026-09-04
+updated: 2026-09-07
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -47,7 +47,7 @@ Home cooks face decision paralysis when they open the fridge — too many possib
 | S-02 | recipe-management       | add, edit, and delete recipes with ingredient lists     | F-01          | US-04, FR-005                         | done     |
 | S-03 | pantry-recipe-matching  | see recipes ranked by ingredient overlap with pantry    | S-01, S-02    | US-02, FR-004                         | done     |
 | S-04 | change-homepage         | use the dashboard at / with a user nav top bar          | F-01          | —                                     | done     |
-| S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | proposed |
+| S-05 | stale-pantry-reminder   | see when pantry was last updated and get a 7-day nudge  | S-01, S-04    | US-03, FR-007, FR-008                 | in-progress |
 
 
 ## Streams
@@ -148,7 +148,7 @@ What's already in place in the codebase as of 2026-08-31 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low-risk slice; main concern is that the reminder must be non-blocking (not a modal or hard gate). Sequenced after S-04 because the household page moves to `/`.
-- **Status:** proposed
+- **Status:** in-progress
 
 ## Backlog Handoff
 

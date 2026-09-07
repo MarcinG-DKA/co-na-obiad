@@ -1,5 +1,6 @@
 import {
   addPantryItem,
+  getPantryLastUpdatedAt,
   listPantryItems,
   PantryNotFoundError,
   removePantryItem,
@@ -22,6 +23,8 @@ function createQueryBuilder(result: QueryResult) {
   const update = jest.fn();
   const del = jest.fn();
   const single = jest.fn();
+  const limit = jest.fn();
+  const maybeSingle = jest.fn();
 
   const builder: {
     select: (...args: unknown[]) => unknown;
@@ -30,7 +33,9 @@ function createQueryBuilder(result: QueryResult) {
     delete: (...args: unknown[]) => unknown;
     eq: (...args: unknown[]) => unknown;
     order: (...args: unknown[]) => unknown;
+    limit: (...args: unknown[]) => unknown;
     single: () => Promise<QueryResult>;
+    maybeSingle: () => Promise<QueryResult>;
     then: (onFulfilled: (value: QueryResult) => unknown, onRejected?: (reason: unknown) => unknown) => Promise<unknown>;
   } = {
     select: (...args: unknown[]) => {
@@ -57,14 +62,22 @@ function createQueryBuilder(result: QueryResult) {
       order(...args);
       return builder;
     },
+    limit: (...args: unknown[]) => {
+      limit(...args);
+      return builder;
+    },
     single: () => {
       single();
+      return Promise.resolve(result);
+    },
+    maybeSingle: () => {
+      maybeSingle();
       return Promise.resolve(result);
     },
     then: (onFulfilled, onRejected) => Promise.resolve(result).then(onFulfilled, onRejected),
   };
 
-  return { builder, eq, order, select, insert, update, delete: del, single };
+  return { builder, eq, order, select, insert, update, delete: del, single, limit, maybeSingle };
 }
 
 function createClient(result: QueryResult) {
@@ -95,6 +108,29 @@ describe("listPantryItems", () => {
   it("throws on a PostgREST error instead of returning []", async () => {
     const { client } = createClient({ data: null, error: { message: "boom" } });
     await expect(listPantryItems(client, "hh-1")).rejects.toThrow("boom");
+  });
+});
+
+describe("getPantryLastUpdatedAt", () => {
+  it("returns null when the pantry has no rows", async () => {
+    const { client, from, query } = createClient({ data: null, error: null });
+    await expect(getPantryLastUpdatedAt(client, "hh-1")).resolves.toBeNull();
+    expect(from).toHaveBeenCalledWith("pantry_items");
+    expect(query.select).toHaveBeenCalledWith("updated_at");
+    expect(query.eq).toHaveBeenCalledWith("household_id", "hh-1");
+    expect(query.order).toHaveBeenCalledWith("updated_at", { ascending: false });
+    expect(query.limit).toHaveBeenCalledWith(1);
+    expect(query.maybeSingle).toHaveBeenCalled();
+  });
+
+  it("returns the newest updated_at", async () => {
+    const { client } = createClient({ data: { updated_at: "2026-09-02T00:00:00Z" }, error: null });
+    await expect(getPantryLastUpdatedAt(client, "hh-1")).resolves.toBe("2026-09-02T00:00:00Z");
+  });
+
+  it("throws on a PostgREST error instead of returning null", async () => {
+    const { client } = createClient({ data: null, error: { message: "boom" } });
+    await expect(getPantryLastUpdatedAt(client, "hh-1")).rejects.toThrow("boom");
   });
 });
 
