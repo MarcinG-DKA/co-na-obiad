@@ -34,6 +34,23 @@ export async function listPantryItems(supabase: AppSupabaseClient, householdId: 
   return data;
 }
 
+export async function getPantryLastUpdatedAt(supabase: AppSupabaseClient, householdId: string): Promise<string | null> {
+  // Oldest updated_at: the dashboard line and 7-day nudge track the stalest item, not the latest edit.
+  const { data, error } = await supabase
+    .from("pantry_items")
+    .select("updated_at")
+    .eq("household_id", householdId)
+    .order("updated_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data?.updated_at ?? null;
+}
+
 export async function addPantryItem(
   supabase: AppSupabaseClient,
   householdId: string,

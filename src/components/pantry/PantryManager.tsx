@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UnitSelect } from "@/components/ui/unit-select";
 import { cn } from "@/lib/utils";
 import { isUnit } from "@/lib/units";
+import { formatPantryItemNeedsReview } from "@/lib/pantry-freshness";
 import type { PantryItem } from "@/lib/services/pantry";
 
 interface Props {
@@ -183,105 +184,111 @@ export default function PantryManager({ initialItems }: Props) {
         </div>
       ) : (
         <ul className="space-y-2">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className={cn(
-                "flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3",
-                item.id.startsWith("temp-") && "animate-pulse opacity-70",
-              )}
-            >
-              {editingId === item.id ? (
-                <div className="flex flex-1 flex-col gap-2">
-                  <Input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => {
-                      setEditName(e.target.value);
-                    }}
-                    className="border-white/20 bg-white/10 text-white focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") void handleUpdate(item.id);
-                      if (e.key === "Escape") cancelEdit();
-                    }}
-                  />
-                  <div className="flex gap-2">
+          {items.map((item) => {
+            const needsReview = formatPantryItemNeedsReview(item.updated_at, new Date());
+
+            return (
+              <li
+                key={item.id}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3",
+                  item.id.startsWith("temp-") && "animate-pulse opacity-70",
+                  needsReview && "border-orange-300/30 bg-orange-300/5",
+                )}
+              >
+                {editingId === item.id ? (
+                  <div className="flex flex-1 flex-col gap-2">
                     <Input
-                      type="number"
-                      placeholder="Qty"
-                      value={editQuantity}
+                      type="text"
+                      value={editName}
                       onChange={(e) => {
-                        setEditQuantity(e.target.value);
+                        setEditName(e.target.value);
                       }}
-                      min="1"
-                      step="any"
-                      className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+                      className="border-white/20 bg-white/10 text-white focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void handleUpdate(item.id);
+                        if (e.key === "Escape") cancelEdit();
+                      }}
                     />
-                    <UnitSelect
-                      value={editUnit}
-                      onValueChange={setEditUnit}
-                      className="w-32 border-white/20 bg-white/10 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
-                    />
-                    <Button
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        placeholder="Qty"
+                        value={editQuantity}
+                        onChange={(e) => {
+                          setEditQuantity(e.target.value);
+                        }}
+                        min="1"
+                        step="any"
+                        className="w-24 border-white/20 bg-white/10 text-white placeholder-white/40 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+                      />
+                      <UnitSelect
+                        value={editUnit}
+                        onValueChange={setEditUnit}
+                        className="w-32 border-white/20 bg-white/10 focus-visible:border-purple-400 focus-visible:ring-purple-400/50"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          void handleUpdate(item.id);
+                        }}
+                        className="bg-green-600 text-white hover:bg-green-500"
+                      >
+                        <Check className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={cancelEdit}
+                        className="text-white/60 hover:text-white"
+                      >
+                        <X className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-medium text-white">{item.name}</span>
+                      {(item.quantity != null || item.unit) && (
+                        <span className="ml-2 text-sm text-blue-100/60">
+                          {item.quantity != null && item.quantity}
+                          {item.quantity != null && item.unit && " "}
+                          {item.unit}
+                        </span>
+                      )}
+                      {needsReview ? <p className="mt-1 text-xs text-orange-300">{needsReview}</p> : null}
+                    </div>
+                    <button
                       type="button"
-                      size="sm"
                       onClick={() => {
-                        void handleUpdate(item.id);
+                        startEdit(item);
                       }}
-                      className="bg-green-600 text-white hover:bg-green-500"
+                      className="text-white/40 transition-colors hover:text-purple-300"
+                      aria-label={`Edit ${item.name}`}
                     >
-                      <Check className="size-4" />
-                    </Button>
-                    <Button
+                      <Pencil className="size-4" />
+                    </button>
+                    <button
                       type="button"
-                      size="sm"
-                      variant="ghost"
-                      onClick={cancelEdit}
-                      className="text-white/60 hover:text-white"
+                      onClick={() => {
+                        if (window.confirm(`Remove ${item.name}?`)) {
+                          void handleRemove(item.id);
+                        }
+                      }}
+                      className="text-white/40 transition-colors hover:text-red-400"
+                      aria-label={`Remove ${item.name}`}
                     >
-                      <X className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="min-w-0 flex-1">
-                    <span className="font-medium text-white">{item.name}</span>
-                    {(item.quantity != null || item.unit) && (
-                      <span className="ml-2 text-sm text-blue-100/60">
-                        {item.quantity != null && item.quantity}
-                        {item.quantity != null && item.unit && " "}
-                        {item.unit}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      startEdit(item);
-                    }}
-                    className="text-white/40 transition-colors hover:text-purple-300"
-                    aria-label={`Edit ${item.name}`}
-                  >
-                    <Pencil className="size-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm(`Remove ${item.name}?`)) {
-                        void handleRemove(item.id);
-                      }
-                    }}
-                    className="text-white/40 transition-colors hover:text-red-400"
-                    aria-label={`Remove ${item.name}`}
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                </>
-              )}
-            </li>
-          ))}
+                      <Trash2 className="size-4" />
+                    </button>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
