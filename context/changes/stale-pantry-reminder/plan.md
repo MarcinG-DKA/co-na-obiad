@@ -236,16 +236,16 @@ No schema change. Existing `updated_at` values are the source of truth. Househol
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Production build passes: `npm run build`
+- [x] 2.1 Unit tests pass: `npm test` — f1bdd7c
+- [x] 2.2 Linting passes: `npm run lint` — f1bdd7c
+- [x] 2.3 Production build passes: `npm run build` — f1bdd7c
 
 #### Manual
 
-- [x] 2.4 Pantry updated today: `/` shows “Updated today”; no inaccuracy notice
-- [x] 2.5 Pantry last updated 7+ days ago: last-updated line plus inline notice and working “Review pantry” link to `/pantry`; matches still visible
-- [x] 2.6 Empty pantry: “Pantry is empty.”; no 7-day notice
-- [x] 2.7 Empty recipe library (or matches load error) + stale pantry: notice still shows
-- [x] 2.8 After editing pantry, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload
-- [x] 2.9 Freshness load failure: “Could not load pantry status.”; match list still renders
-- [x] 2.10 `/pantry` has no household last-updated line and no homepage-style 7-day nudge
+- [x] 2.4 Pantry updated today: `/` shows “Updated today”; no inaccuracy notice — f1bdd7c
+- [x] 2.5 Pantry last updated 7+ days ago: last-updated line plus inline notice and working “Review pantry” link to `/pantry`; matches still visible — f1bdd7c
+- [x] 2.6 Empty pantry: “Pantry is empty.”; no 7-day notice — f1bdd7c
+- [x] 2.7 Empty recipe library (or matches load error) + stale pantry: notice still shows — f1bdd7c
+- [x] 2.8 After editing pantry, returning to `/` (back or tab focus) updates last-updated and clears the notice without a full reload — f1bdd7c
+- [x] 2.9 Freshness load failure: “Could not load pantry status.”; match list still renders — f1bdd7c
+- [x] 2.10 `/pantry` has no household last-updated line and no homepage-style 7-day nudge — f1bdd7c
