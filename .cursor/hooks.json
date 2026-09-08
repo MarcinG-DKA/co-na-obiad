@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "hooks": {
+      "afterFileEdit": [
+        {
+          "command": "npx eslint --fix . --quiet",
+          "timeout": 10
+        }
+      ]
+    }
+  }
+  
