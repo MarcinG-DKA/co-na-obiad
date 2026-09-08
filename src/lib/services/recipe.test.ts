@@ -284,3 +284,25 @@ describe("getRecipe against a two-household store", () => {
     await expect(getRecipe(client, "b-recipe", "hh-A")).rejects.toBeInstanceOf(RecipeNotFoundError);
   });
 });
+
+describe("saveRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A and leaves B's recipe", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.b] });
+
+    await expect(saveRecipe(client, "hh-A", saveInput, "b-recipe")).rejects.toBeInstanceOf(RecipeNotFoundError);
+
+    const remaining = await getRecipe(client, "b-recipe", "hh-B");
+    expect(remaining).toMatchObject({ id: "b-recipe", title: "Household B Chili" });
+  });
+});
+
+describe("removeRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A and leaves B's recipe", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.b] });
+
+    await expect(removeRecipe(client, "b-recipe", "hh-A")).rejects.toBeInstanceOf(RecipeNotFoundError);
+
+    const remaining = await getRecipe(client, "b-recipe", "hh-B");
+    expect(remaining).toMatchObject({ id: "b-recipe", title: "Household B Chili" });
+  });
+});

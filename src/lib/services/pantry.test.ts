@@ -200,3 +200,33 @@ describe("listPantryItems against a two-household store", () => {
     expect(items.map((item) => item.name)).toEqual(["Milk"]);
   });
 });
+
+function householdBPantry() {
+  return createSupabaseFake({
+    pantryItems: [{ id: "b-item", household_id: "hh-B", name: "B-only pickles" }],
+  });
+}
+
+describe("updatePantryItem against a two-household store", () => {
+  it("throws PantryNotFoundError for household B's item id as A and leaves B's row", async () => {
+    const client = householdBPantry();
+
+    await expect(updatePantryItem(client, "b-item", "hh-A", { name: "Stolen" })).rejects.toBeInstanceOf(
+      PantryNotFoundError,
+    );
+
+    const remaining = await listPantryItems(client, "hh-B");
+    expect(remaining).toEqual([expect.objectContaining({ id: "b-item", name: "B-only pickles" })]);
+  });
+});
+
+describe("removePantryItem against a two-household store", () => {
+  it("throws PantryNotFoundError for household B's item id as A and leaves B's row", async () => {
+    const client = householdBPantry();
+
+    await expect(removePantryItem(client, "b-item", "hh-A")).rejects.toBeInstanceOf(PantryNotFoundError);
+
+    const remaining = await listPantryItems(client, "hh-B");
+    expect(remaining).toEqual([expect.objectContaining({ id: "b-item", name: "B-only pickles" })]);
+  });
+});

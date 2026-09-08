@@ -140,6 +140,15 @@ describe("POST /api/pantry", () => {
     expect(body).toEqual({ data: sampleItem });
     expect(mockAdd).toHaveBeenCalledWith(expect.anything(), "hh-1", { name: "Milk" });
   });
+
+  it("ignores a client-supplied household_id and uses locals", async () => {
+    mockAdd.mockResolvedValue(sampleItem);
+    const { status } = await read(
+      await POST(context({ method: "POST", body: { name: "Milk", household_id: "hh-B" } })),
+    );
+    expect(status).toBe(201);
+    expect(mockAdd).toHaveBeenCalledWith(expect.anything(), "hh-1", { name: "Milk" });
+  });
 });
 
 describe("PATCH /api/pantry/:id", () => {

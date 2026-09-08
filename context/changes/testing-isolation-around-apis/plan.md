@@ -380,30 +380,30 @@ None. No production behavior change intended. If a test fails on current code, t
 
 #### Automated
 
-- [x] 2.1 `src/test/supabase-fake.ts` exists and is used by the new store-backed cases
-- [x] 2.2 `listPantryItems(A)` omits B’s items; `listRecipes(A)` omits B’s recipes; `getRecipe(A, B’s id)` throws `RecipeNotFoundError`
-- [x] 2.3 `src/lib/services/matching-store.test.ts` asserts `listMatches(A)` with B seeded does not include B’s recipe titles
-- [x] 2.4 Unit tests pass: `npm test`
-- [x] 2.5 Linting passes: `npm run lint`
+- [x] 2.1 `src/test/supabase-fake.ts` exists and is used by the new store-backed cases — 18ecbda
+- [x] 2.2 `listPantryItems(A)` omits B’s items; `listRecipes(A)` omits B’s recipes; `getRecipe(A, B’s id)` throws `RecipeNotFoundError` — 18ecbda
+- [x] 2.3 `src/lib/services/matching-store.test.ts` asserts `listMatches(A)` with B seeded does not include B’s recipe titles — 18ecbda
+- [x] 2.4 Unit tests pass: `npm test` — 18ecbda
+- [x] 2.5 Linting passes: `npm run lint` — 18ecbda
 
 #### Manual
 
-- [x] 2.6 No new test is named or commented as “RLS”; isolation is A-cannot-see-B on the fake, not “RLS enabled”
+- [x] 2.6 No new test is named or commented as “RLS”; isolation is A-cannot-see-B on the fake, not “RLS enabled” — 18ecbda
 
 ### Phase 3: IDOR mutate and create strip
 
 #### Automated
 
-- [ ] 3.1 Store-backed `updatePantryItem` and `removePantryItem` with B’s id as A throw `PantryNotFoundError` and B’s row remains
-- [ ] 3.2 Store-backed `saveRecipe` (B’s id) and `removeRecipe` as A throw `RecipeNotFoundError` and B’s recipe remains
-- [ ] 3.3 `src/pages/api/pantry/pantry-idor-api.test.ts` PATCH of B’s id as A returns 404 `"Item not found"` without mocking `updatePantryItem`, and B’s row remains
-- [ ] 3.4 `POST /api/pantry` with extra `household_id` still calls `addPantryItem` with the locals household and `{ name: "Milk" }`
-- [ ] 3.5 Unit tests pass: `npm test`
-- [ ] 3.6 Linting passes: `npm run lint`
+- [x] 3.1 Store-backed `updatePantryItem` and `removePantryItem` with B’s id as A throw `PantryNotFoundError` and B’s row remains
+- [x] 3.2 Store-backed `saveRecipe` (B’s id) and `removeRecipe` as A throw `RecipeNotFoundError` and B’s recipe remains
+- [x] 3.3 `src/pages/api/pantry/pantry-idor-api.test.ts` PATCH of B’s id as A returns 404 `"Item not found"` without mocking `updatePantryItem`, and B’s row remains
+- [x] 3.4 `POST /api/pantry` with extra `household_id` still calls `addPantryItem` with the locals household and `{ name: "Milk" }`
+- [x] 3.5 Unit tests pass: `npm test`
+- [x] 3.6 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.7 No new test expects 403 or a PUT route; 401 is not used as the IDOR oracle
+- [x] 3.7 No new test expects 403 or a PUT route; 401 is not used as the IDOR oracle
 
 ### Phase 4: List-after-write re-rank
 
