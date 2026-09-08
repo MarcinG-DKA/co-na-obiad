@@ -394,29 +394,29 @@ None. No production behavior change intended. If a test fails on current code, t
 
 #### Automated
 
-- [x] 3.1 Store-backed `updatePantryItem` and `removePantryItem` with B’s id as A throw `PantryNotFoundError` and B’s row remains
-- [x] 3.2 Store-backed `saveRecipe` (B’s id) and `removeRecipe` as A throw `RecipeNotFoundError` and B’s recipe remains
-- [x] 3.3 `src/pages/api/pantry/pantry-idor-api.test.ts` PATCH of B’s id as A returns 404 `"Item not found"` without mocking `updatePantryItem`, and B’s row remains
-- [x] 3.4 `POST /api/pantry` with extra `household_id` still calls `addPantryItem` with the locals household and `{ name: "Milk" }`
-- [x] 3.5 Unit tests pass: `npm test`
-- [x] 3.6 Linting passes: `npm run lint`
+- [x] 3.1 Store-backed `updatePantryItem` and `removePantryItem` with B’s id as A throw `PantryNotFoundError` and B’s row remains — a325c16
+- [x] 3.2 Store-backed `saveRecipe` (B’s id) and `removeRecipe` as A throw `RecipeNotFoundError` and B’s recipe remains — a325c16
+- [x] 3.3 `src/pages/api/pantry/pantry-idor-api.test.ts` PATCH of B’s id as A returns 404 `"Item not found"` without mocking `updatePantryItem`, and B’s row remains — a325c16
+- [x] 3.4 `POST /api/pantry` with extra `household_id` still calls `addPantryItem` with the locals household and `{ name: "Milk" }` — a325c16
+- [x] 3.5 Unit tests pass: `npm test` — a325c16
+- [x] 3.6 Linting passes: `npm run lint` — a325c16
 
 #### Manual
 
-- [x] 3.7 No new test expects 403 or a PUT route; 401 is not used as the IDOR oracle
+- [x] 3.7 No new test expects 403 or a PUT route; 401 is not used as the IDOR oracle — a325c16
 
 ### Phase 4: List-after-write re-rank
 
 #### Automated
 
-- [ ] 4.1 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `addPantryItem`
-- [ ] 4.2 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `saveRecipe`
-- [ ] 4.3 Unit tests pass: `npm test`
-- [ ] 4.4 Linting passes: `npm run lint`
+- [x] 4.1 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `addPantryItem`
+- [x] 4.2 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `saveRecipe`
+- [x] 4.3 Unit tests pass: `npm test`
+- [x] 4.4 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.5 Before/after expected values are independent fixtures (readable names and a stated delta), not copied scorer internals; `matching.test.ts` loader-mock wiring tests remain for parallel-load/errors only
+- [x] 4.5 Before/after expected values are independent fixtures (readable names and a stated delta), not copied scorer internals; `matching.test.ts` loader-mock wiring tests remain for parallel-load/errors only
 
 ### Phase 5: Cookbook §6.2 and §6.4
 
