@@ -253,26 +253,26 @@ None.
 
 #### Automated
 
-- [x] 1.1 `src/lib/services/matching.test.ts` contains both new cases (full/partial/zero-overlap order; recipe `"Eggs"` spelling)
-- [x] 1.2 Unit tests pass: `npm test`
-- [x] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 `src/lib/services/matching.test.ts` contains both new cases (full/partial/zero-overlap order; recipe `"Eggs"` spelling) — f3f4fa2
+- [x] 1.2 Unit tests pass: `npm test` — f3f4fa2
+- [x] 1.3 Linting passes: `npm run lint` — f3f4fa2
 
 #### Manual
 
-- [x] 1.4 The two new cases use independent pantry/recipe name fixtures (readable expected order/spelling, not copied scorer internals)
+- [x] 1.4 The two new cases use independent pantry/recipe name fixtures (readable expected order/spelling, not copied scorer internals) — f3f4fa2
 
 ### Phase 2: Session gate helper
 
 #### Automated
 
-- [ ] 2.1 `shouldRedirectUnauthenticated` is exported from `src/lib/protected-routes.ts` and used by `src/middleware.ts` for the unauthenticated redirect
-- [ ] 2.2 `src/lib/protected-routes.test.ts` asserts the three session cases above
-- [ ] 2.3 Unit tests pass: `npm test`
-- [ ] 2.4 Linting passes: `npm run lint`
+- [x] 2.1 `shouldRedirectUnauthenticated` is exported from `src/lib/protected-routes.ts` and used by `src/middleware.ts` for the unauthenticated redirect
+- [x] 2.2 `src/lib/protected-routes.test.ts` asserts the three session cases above
+- [x] 2.3 Unit tests pass: `npm test`
+- [x] 2.4 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.5 Middleware still uses the helper for the redirect (no leftover inline `isProtectedPath && !user` gate)
+- [x] 2.5 Middleware still uses the helper for the redirect (no leftover inline `isProtectedPath && !user` gate)
 
 ### Phase 3: Cookbook §6.1 and §6.3
 
