@@ -78,6 +78,14 @@ describe("matchRecipes", () => {
     expect(match.checkNames).toEqual([]);
   });
 
+  it("keeps the recipe's original spelling in matchedNames", () => {
+    const [match] = matchRecipes(pantry("eggs"), [recipe("omelette", "Omelette", "Eggs")]);
+    expect(match.score).toBe(1);
+    expect(match.matchedNames).toEqual(["Eggs"]);
+    expect(match.missingNames).toEqual([]);
+    expect(match.checkNames).toEqual([]);
+  });
+
   it("trims names before comparing", () => {
     const [match] = matchRecipes(pantry("  milk  "), [recipe("drink", "Drink", "milk")]);
     expect(match.score).toBe(1);
@@ -124,6 +132,18 @@ describe("matchRecipes", () => {
     ]);
 
     expect(ranked.map((match) => match.title)).toEqual(["Omelette", "Bread", "Soup"]);
+  });
+
+  it("ranks full overlap above partial and puts zero-overlap last", () => {
+    const ranked = matchRecipes(pantry("eggs", "milk"), [
+      recipe("salad", "Salad", "lettuce"),
+      recipe("cake", "Cake", "flour", "eggs"),
+      recipe("omelette", "Omelette", "eggs", "milk"),
+    ]);
+
+    expect(ranked.map((match) => match.recipeId)).toEqual(["omelette", "cake", "salad"]);
+    expect(ranked[0].score).toBe(1);
+    expect(ranked[2].score).toBe(0);
   });
 
   it("treats the ingredient as ok when units match and pantry quantity is enough", () => {
