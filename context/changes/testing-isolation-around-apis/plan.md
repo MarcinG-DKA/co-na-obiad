@@ -422,9 +422,9 @@ None. No production behavior change intended. If a test fails on current code, t
 
 #### Automated
 
-- [x] 5.1 `context/foundation/test-plan.md` §6.2 and §6.4 no longer contain `TBD — see §3 Phase 2`
-- [x] 5.2 `npm test` still passes: `npm test`
+- [x] 5.1 `context/foundation/test-plan.md` §6.2 and §6.4 no longer contain `TBD — see §3 Phase 2` — bbaf216
+- [x] 5.2 `npm test` still passes: `npm test` — bbaf216
 
 #### Manual
 
-- [x] 5.3 A reader of §6.2 / §6.4 can name the fake, 404-not-403, “cookie must be a membership,” and list-after-write as `listMatches` (not Playwright) without opening this plan
+- [x] 5.3 A reader of §6.2 / §6.4 can name the fake, 404-not-403, “cookie must be a membership,” and list-after-write as `listMatches` (not Playwright) without opening this plan — bbaf216
