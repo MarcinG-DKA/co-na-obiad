@@ -6,6 +6,7 @@ import {
   removePantryItem,
   updatePantryItem,
 } from "@/lib/services/pantry";
+import { createSupabaseFake } from "@/test/supabase-fake";
 import type { Database } from "@/db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -181,5 +182,21 @@ describe("removePantryItem", () => {
   it("resolves when a row is deleted", async () => {
     const { client } = createClient({ data: null, error: null, count: 1 });
     await expect(removePantryItem(client, "item-1", "hh-1")).resolves.toBeUndefined();
+  });
+});
+
+describe("listPantryItems against a two-household store", () => {
+  it("returns only household A's items", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [
+        { id: "a-item", household_id: "hh-A", name: "Milk" },
+        { id: "b-item", household_id: "hh-B", name: "B-only pickles" },
+      ],
+    });
+
+    const items = await listPantryItems(client, "hh-A");
+
+    expect(items.map((item) => item.id)).toEqual(["a-item"]);
+    expect(items.map((item) => item.name)).toEqual(["Milk"]);
   });
 });

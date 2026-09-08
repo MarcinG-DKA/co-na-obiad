@@ -6,6 +6,7 @@ import {
   removeRecipe,
   saveRecipe,
 } from "@/lib/services/recipe";
+import { createSupabaseFake } from "@/test/supabase-fake";
 import type { Database } from "@/db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -247,5 +248,39 @@ describe("removeRecipe", () => {
   it("resolves when a row is deleted", async () => {
     const { client } = createClient({ data: null, error: null, count: 1 });
     await expect(removeRecipe(client, "recipe-1", "hh-1")).resolves.toBeUndefined();
+  });
+});
+
+const storeRecipes = {
+  a: {
+    id: "a-recipe",
+    household_id: "hh-A",
+    title: "Toast",
+    ingredients: [{ name: "bread" }],
+  },
+  b: {
+    id: "b-recipe",
+    household_id: "hh-B",
+    title: "Household B Chili",
+    ingredients: [{ name: "beans" }],
+  },
+};
+
+describe("listRecipes against a two-household store", () => {
+  it("returns only household A's recipes", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.a, storeRecipes.b] });
+
+    const recipes = await listRecipes(client, "hh-A");
+
+    expect(recipes.map((recipe) => recipe.id)).toEqual(["a-recipe"]);
+    expect(recipes.map((recipe) => recipe.title)).toEqual(["Toast"]);
+  });
+});
+
+describe("getRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.a, storeRecipes.b] });
+
+    await expect(getRecipe(client, "b-recipe", "hh-A")).rejects.toBeInstanceOf(RecipeNotFoundError);
   });
 });

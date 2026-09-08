@@ -368,27 +368,27 @@ None. No production behavior change intended. If a test fails on current code, t
 
 #### Automated
 
-- [x] 1.1 `src/lib/services/household.test.ts` asserts empty memberships → `null`; cookie B with only A → A; cookie B with A and B → B; missing cookie → earliest `created_at`
-- [x] 1.2 Unit tests pass: `npm test`
-- [x] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 `src/lib/services/household.test.ts` asserts empty memberships → `null`; cookie B with only A → A; cookie B with A and B → B; missing cookie → earliest `created_at` — 6de5f17
+- [x] 1.2 Unit tests pass: `npm test` — 6de5f17
+- [x] 1.3 Linting passes: `npm run lint` — 6de5f17
 
 #### Manual
 
-- [x] 1.4 The four cases distinguish non-member spoof of B from join (membership includes B)
+- [x] 1.4 The four cases distinguish non-member spoof of B from join (membership includes B) — 6de5f17
 
 ### Phase 2: Fake store and read isolation
 
 #### Automated
 
-- [ ] 2.1 `src/test/supabase-fake.ts` exists and is used by the new store-backed cases
-- [ ] 2.2 `listPantryItems(A)` omits B’s items; `listRecipes(A)` omits B’s recipes; `getRecipe(A, B’s id)` throws `RecipeNotFoundError`
-- [ ] 2.3 `src/lib/services/matching-store.test.ts` asserts `listMatches(A)` with B seeded does not include B’s recipe titles
-- [ ] 2.4 Unit tests pass: `npm test`
-- [ ] 2.5 Linting passes: `npm run lint`
+- [x] 2.1 `src/test/supabase-fake.ts` exists and is used by the new store-backed cases
+- [x] 2.2 `listPantryItems(A)` omits B’s items; `listRecipes(A)` omits B’s recipes; `getRecipe(A, B’s id)` throws `RecipeNotFoundError`
+- [x] 2.3 `src/lib/services/matching-store.test.ts` asserts `listMatches(A)` with B seeded does not include B’s recipe titles
+- [x] 2.4 Unit tests pass: `npm test`
+- [x] 2.5 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.6 No new test is named or commented as “RLS”; isolation is A-cannot-see-B on the fake, not “RLS enabled”
+- [x] 2.6 No new test is named or commented as “RLS”; isolation is A-cannot-see-B on the fake, not “RLS enabled”
 
 ### Phase 3: IDOR mutate and create strip
 
