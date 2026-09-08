@@ -1,7 +1,7 @@
 ---
 change_id: testing-isolation-around-apis
 title: Prove household isolation, IDOR, and ranked-list refresh after writes
-status: implemented
+status: impl_reviewed
 created: 2026-09-08
 updated: 2026-09-08
 archived_at: null
