@@ -116,7 +116,13 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 1 for the matching independent-oracle / unique-name coverage pattern (colocated `*.test.ts`, `npm test`).
+- **Location**: colocated `*.test.ts` next to the module (`src/lib/services/matching.test.ts` for ranking).
+- **Naming**: `<module>.test.ts`. Use `describe` for the function (`matchRecipes`) and `it` for one behaviour.
+- **Fixtures**: hand-built pantry/recipe **names** (and qty/unit only when the case is about Check/qty). Expected order, scores, and name lists are written from the product contract, not pasted from scorer internals.
+- **Reference tests**: omelette-vs-cake unique-name ranking; full/partial/zero-overlap order (zero-overlap last, score `0`); recipe `"Eggs"` + pantry `"eggs"` keeps `"Eggs"` in `matchedNames`.
+- **Product law**: live Check/qty scoring (half credit for Check; insufficient qty is Missing). Do not assert archived “quantities ignored.”
+- **Anti-pattern**: do not mock `listMatches` in API tests and treat that as a ranking oracle. API tests cover the envelope; ranking math lives in the scorer suite.
+- **Run locally**: `npm test`
 
 ### 6.2 Adding an integration test
 
@@ -124,7 +130,12 @@ TBD — see §3 Phase 2 for two-household isolation/IDOR and list-after-write re
 
 ### 6.3 Adding a session-level / e2e test
 
-TBD — see §3 Phase 1 for guest `/` denial and signed-in ranked-list reachability (Risk #3). Do not add a page tour.
+- **Location**: colocated `src/lib/protected-routes.test.ts` (same module as `isProtectedPath`).
+- **Pattern**: session-level proof is Jest on `shouldRedirectUnauthenticated(pathname, user)`, not a browser tour. Middleware must call that helper for the unauthenticated redirect.
+- **Cases to prove**: guest `/` → redirect (true); `/auth/signin` with no user → no redirect (false); signed-in `/` → no redirect (false).
+- **Run locally**: `npm test` (already in CI). No new workflow YAML for this layer.
+- **When NOT to use Playwright / a page tour**: do not add e2e for `/` gating while this helper is the control. Reach for Playwright later only if a risk is real cookies or the Workers runtime, after this suite is still green.
+- **Anti-pattern**: importing `src/middleware.ts` in Jest (`astro:middleware` / `astro:env`); a full-app Playwright suite for every page.
 
 ### 6.4 Adding a test for a new API endpoint
 
@@ -136,7 +147,7 @@ TBD — see §3 Phase 3 for empty vs stale vs load-error (Risk #6); elapsed 168h
 
 ### 6.6 Per-rollout-phase notes
 
-_(Empty until a phase ships.)_
+- **§3 Phase 1 (`testing-critical-path-coverage`)**: matching oracle gaps live in `matching.test.ts`; `/` session gate is `shouldRedirectUnauthenticated` in `protected-routes.test.ts`, not Playwright.
 
 ## 7. What We Deliberately Don't Test
 

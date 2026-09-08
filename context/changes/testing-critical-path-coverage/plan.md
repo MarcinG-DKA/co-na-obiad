@@ -265,22 +265,22 @@ None.
 
 #### Automated
 
-- [x] 2.1 `shouldRedirectUnauthenticated` is exported from `src/lib/protected-routes.ts` and used by `src/middleware.ts` for the unauthenticated redirect
-- [x] 2.2 `src/lib/protected-routes.test.ts` asserts the three session cases above
-- [x] 2.3 Unit tests pass: `npm test`
-- [x] 2.4 Linting passes: `npm run lint`
+- [x] 2.1 `shouldRedirectUnauthenticated` is exported from `src/lib/protected-routes.ts` and used by `src/middleware.ts` for the unauthenticated redirect — 032b5b8
+- [x] 2.2 `src/lib/protected-routes.test.ts` asserts the three session cases above — 032b5b8
+- [x] 2.3 Unit tests pass: `npm test` — 032b5b8
+- [x] 2.4 Linting passes: `npm run lint` — 032b5b8
 
 #### Manual
 
-- [x] 2.5 Middleware still uses the helper for the redirect (no leftover inline `isProtectedPath && !user` gate)
+- [x] 2.5 Middleware still uses the helper for the redirect (no leftover inline `isProtectedPath && !user` gate) — 032b5b8
 
 ### Phase 3: Cookbook §6.1 and §6.3
 
 #### Automated
 
-- [ ] 3.1 `context/foundation/test-plan.md` §6.1 and §6.3 no longer contain `TBD — see §3 Phase 1`
-- [ ] 3.2 `npm test` still passes: `npm test`
+- [x] 3.1 `context/foundation/test-plan.md` §6.1 and §6.3 no longer contain `TBD — see §3 Phase 1`
+- [x] 3.2 `npm test` still passes: `npm test`
 
 #### Manual
 
-- [ ] 3.3 A reader of §6.1 / §6.3 can name the file, the cheapest layer, and the anti-pattern for matching vs `/` gating without opening this plan
+- [x] 3.3 A reader of §6.1 / §6.3 can name the file, the cheapest layer, and the anti-pattern for matching vs `/` gating without opening this plan
