@@ -1,7 +1,7 @@
 ---
 change_id: testing-critical-path-coverage
 title: Prove matching contract and session-gated `/`
-status: implementing
+status: implemented
 created: 2026-09-07
 updated: 2026-09-08
 archived_at: null

@@ -278,9 +278,9 @@ None.
 
 #### Automated
 
-- [x] 3.1 `context/foundation/test-plan.md` §6.1 and §6.3 no longer contain `TBD — see §3 Phase 1`
-- [x] 3.2 `npm test` still passes: `npm test`
+- [x] 3.1 `context/foundation/test-plan.md` §6.1 and §6.3 no longer contain `TBD — see §3 Phase 1` — 4accee9
+- [x] 3.2 `npm test` still passes: `npm test` — 4accee9
 
 #### Manual
 
-- [x] 3.3 A reader of §6.1 / §6.3 can name the file, the cheapest layer, and the anti-pattern for matching vs `/` gating without opening this plan
+- [x] 3.3 A reader of §6.1 / §6.3 can name the file, the cheapest layer, and the anti-pattern for matching vs `/` gating without opening this plan — 4accee9
