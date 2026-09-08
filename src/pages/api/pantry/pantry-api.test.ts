@@ -7,30 +7,31 @@ import {
   removePantryItem,
   updatePantryItem,
 } from "@/lib/services/pantry";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/supabase", () => ({
-  createClient: jest.fn(),
+vi.mock("@/lib/supabase", () => ({
+  createClient: vi.fn(),
 }));
 
-jest.mock("@/lib/services/pantry", () => {
-  const actual = jest.requireActual<typeof import("@/lib/services/pantry")>("@/lib/services/pantry");
+vi.mock("@/lib/services/pantry", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/services/pantry")>();
   return {
     ...actual,
-    listPantryItems: jest.fn(),
-    addPantryItem: jest.fn(),
-    updatePantryItem: jest.fn(),
-    removePantryItem: jest.fn(),
+    listPantryItems: vi.fn(),
+    addPantryItem: vi.fn(),
+    updatePantryItem: vi.fn(),
+    removePantryItem: vi.fn(),
   };
 });
 
 import { GET, POST } from "@/pages/api/pantry/index";
 import { PATCH, DELETE } from "@/pages/api/pantry/[id]";
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
-const mockList = listPantryItems as jest.MockedFunction<typeof listPantryItems>;
-const mockAdd = addPantryItem as jest.MockedFunction<typeof addPantryItem>;
-const mockUpdate = updatePantryItem as jest.MockedFunction<typeof updatePantryItem>;
-const mockRemove = removePantryItem as jest.MockedFunction<typeof removePantryItem>;
+const mockCreateClient = createClient as MockedFunction<typeof createClient>;
+const mockList = listPantryItems as MockedFunction<typeof listPantryItems>;
+const mockAdd = addPantryItem as MockedFunction<typeof addPantryItem>;
+const mockUpdate = updatePantryItem as MockedFunction<typeof updatePantryItem>;
+const mockRemove = removePantryItem as MockedFunction<typeof removePantryItem>;
 
 const sampleItem = {
   id: "item-1",
@@ -79,8 +80,8 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 
 describe("GET /api/pantry", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({});
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -112,8 +113,8 @@ describe("GET /api/pantry", () => {
 
 describe("POST /api/pantry", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({});
   });
 
   it("returns 400 for invalid JSON", async () => {
@@ -143,8 +144,8 @@ describe("POST /api/pantry", () => {
 
 describe("PATCH /api/pantry/:id", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({});
   });
 
   it("returns 404 when the item is missing", async () => {
@@ -159,8 +160,8 @@ describe("PATCH /api/pantry/:id", () => {
 
 describe("DELETE /api/pantry/:id", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({});
   });
 
   it("returns 404 when the item is missing", async () => {

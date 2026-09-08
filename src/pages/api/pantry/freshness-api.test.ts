@@ -1,23 +1,24 @@
 import type { APIContext } from "astro";
 import { createClient } from "@/lib/supabase";
 import { getPantryLastUpdatedAt } from "@/lib/services/pantry";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/supabase", () => ({
-  createClient: jest.fn(),
+vi.mock("@/lib/supabase", () => ({
+  createClient: vi.fn(),
 }));
 
-jest.mock("@/lib/services/pantry", () => {
-  const actual = jest.requireActual<typeof import("@/lib/services/pantry")>("@/lib/services/pantry");
+vi.mock("@/lib/services/pantry", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/services/pantry")>();
   return {
     ...actual,
-    getPantryLastUpdatedAt: jest.fn(),
+    getPantryLastUpdatedAt: vi.fn(),
   };
 });
 
 import { GET } from "@/pages/api/pantry/freshness";
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
-const mockGetLastUpdated = getPantryLastUpdatedAt as jest.MockedFunction<typeof getPantryLastUpdatedAt>;
+const mockCreateClient = createClient as MockedFunction<typeof createClient>;
+const mockGetLastUpdated = getPantryLastUpdatedAt as MockedFunction<typeof getPantryLastUpdatedAt>;
 
 function context(
   overrides: {
@@ -41,8 +42,8 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 
 describe("GET /api/pantry/freshness", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({});
   });
 
   it("returns 401 when unauthenticated", async () => {

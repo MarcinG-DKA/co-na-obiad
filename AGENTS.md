@@ -32,7 +32,7 @@ API handlers validate with Zod. Extract React hooks to `src/components/hooks/`. 
 
 ## Testing
 
-Jest (`npm test`) with `ts-jest`. Colocate `*.test.ts` next to the module under test (`src/lib/services/pantry.test.ts`, `src/pages/api/pantry/pantry-api.test.ts`). CI runs `npm test` after lint. Mock `@/lib/supabase` in API tests so `astro:env` is never loaded.
+Vitest (`npm test` → `vitest run`) with a node environment and `vitest.config.ts` (`@/` alias only — does not load Astro config). Colocate `*.test.ts` next to the module under test (`src/lib/services/pantry.test.ts`, `src/pages/api/pantry/pantry-api.test.ts`). CI runs `npm test` after lint. Mock `@/lib/supabase` in API tests so `astro:env` is never loaded. Watch: `npm run test:watch`. Scoped per-edit: `npx vitest related "$FILE" --run`.
 
 ## Commit and Pull Request Guidelines
 

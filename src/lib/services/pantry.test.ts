@@ -16,15 +16,15 @@ interface QueryResult {
 }
 
 function createQueryBuilder(result: QueryResult) {
-  const eq = jest.fn();
-  const order = jest.fn();
-  const select = jest.fn();
-  const insert = jest.fn();
-  const update = jest.fn();
-  const del = jest.fn();
-  const single = jest.fn();
-  const limit = jest.fn();
-  const maybeSingle = jest.fn();
+  const eq = vi.fn();
+  const order = vi.fn();
+  const select = vi.fn();
+  const insert = vi.fn();
+  const update = vi.fn();
+  const del = vi.fn();
+  const single = vi.fn();
+  const limit = vi.fn();
+  const maybeSingle = vi.fn();
 
   const builder: {
     select: (...args: unknown[]) => unknown;
@@ -82,7 +82,7 @@ function createQueryBuilder(result: QueryResult) {
 
 function createClient(result: QueryResult) {
   const query = createQueryBuilder(result);
-  const from = jest.fn(() => query.builder);
+  const from = vi.fn(() => query.builder);
   return { client: { from } as unknown as SupabaseClient<Database>, from, query };
 }
 

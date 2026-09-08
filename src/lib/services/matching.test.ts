@@ -4,19 +4,20 @@ import { listPantryItems } from "@/lib/services/pantry";
 import type { RecipeWithIngredientNames } from "@/lib/services/recipe";
 import { listRecipesWithIngredients } from "@/lib/services/recipe";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/services/pantry", () => ({
-  listPantryItems: jest.fn(),
+vi.mock("@/lib/services/pantry", () => ({
+  listPantryItems: vi.fn(),
 }));
 
-jest.mock("@/lib/services/recipe", () => ({
-  listRecipesWithIngredients: jest.fn(),
+vi.mock("@/lib/services/recipe", () => ({
+  listRecipesWithIngredients: vi.fn(),
 }));
 
 import { listMatches, matchRecipes, normalizeName } from "@/lib/services/matching";
 
-const mockListPantry = listPantryItems as jest.MockedFunction<typeof listPantryItems>;
-const mockListRecipes = listRecipesWithIngredients as jest.MockedFunction<typeof listRecipesWithIngredients>;
+const mockListPantry = listPantryItems as MockedFunction<typeof listPantryItems>;
+const mockListRecipes = listRecipesWithIngredients as MockedFunction<typeof listRecipesWithIngredients>;
 
 function pantry(...names: string[]): Pick<PantryItem, "name" | "quantity" | "unit">[] {
   return names.map((name) => ({ name, quantity: null, unit: null }));

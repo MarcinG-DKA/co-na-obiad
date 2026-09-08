@@ -52,7 +52,7 @@ research's job, see §1 principle #3).
 |------|-----------------------------|----------------|--------------------------------------|-----------------------|-----------------------|
 | #1 | Given pantry and recipe ingredient lists (independent fixtures), order/scores/missing names match unique-name coverage; empty pantry → all scores 0; zero-overlap at bottom; name-only overlap is not a full match when units or amounts disagree (Check / insufficient qty) | Green existing tests mean the ranking is still the product contract | Ranking entry (SSR + list API), normalize rule, unique-name denominator, empty pantry vs empty library, Check at half credit, qty/unit sufficiency | Unit with independent fixtures (scorer already exists) | Oracle copied from the scorer implementation |
 | #2 | Member of A cannot read or write B’s pantry, recipes, or matches | Logged-in ⇒ allowed; “RLS enabled” ⇒ isolated; 401 on missing session ⇒ ownership works | How current household is chosen; API household source; RLS vs app check; join path | API/service integration with two-user fixtures | Happy-path-only as household A |
-| #3 | Signed-out `/` is redirected before the household page runs; `/auth/signin` is not looped; signed-in session reaches the ranked list | Path-helper unit tests imply cookie session + middleware work | Session cookie shape, middleware order, exact `/` vs prefix, sign-out landing; guest matches also require a household id | Path-helper unit (exists) + Jest on `shouldRedirectUnauthenticated` (not e2e) | Full-app Playwright suite for every page |
+| #3 | Signed-out `/` is redirected before the household page runs; `/auth/signin` is not looped; signed-in session reaches the ranked list | Path-helper unit tests imply cookie session + middleware work | Session cookie shape, middleware order, exact `/` vs prefix, sign-out landing; guest matches also require a household id | Path-helper unit (exists) + Vitest on `shouldRedirectUnauthenticated` (not e2e) | Full-app Playwright suite for every page |
 | #4 | PUT/PATCH/DELETE with another household’s resource id is 403/404; create ignores a client-supplied household id | 401 unauthenticated ⇒ IDOR is covered | Resource id source, household id source, RLS vs handler | API integration, two households | Mock the service so the handler never sees a foreign id |
 | #5 | After a pantry/recipe write, the next ranked-list load (SSR or on-screen refetch) shows new scores/missing names | First-paint SSR ⇒ US-02; refetch HTTP 200 ⇒ ranking changed | When matches reload, list API vs pantry page, visibility/pageshow | Service/API integration after a write; e2e only if the island refetch is the failure | Kitchen-flow e2e when list-after-write would catch it |
 | #6 | Empty pantry: no 7-day nudge. Oldest item ≥ 168h: nudge. Under 168h: no nudge. Load error ≠ empty | Any `updated_at` ⇒ reminder is correct; deleting a fresh row clears the nudge | MIN vs MAX, injected `now`, empty vs load error | Unit (already present) — only add what research shows is missing | Snapshot of English copy as the only assertion |
@@ -80,20 +80,20 @@ of assuming access.
 
 | Layer | Tool | Version | Notes |
 |-------|------|---------|-------|
-| unit + integration | Jest + ts-jest | 30.x / 29.x | `jest.config.cjs`; `testEnvironment: node`; colocated `*.test.ts` under `src/`; 13 files today (sparse; cluster in services/schemas/API) |
-| API mocking | Jest mocks of `@/lib/supabase` | n/a | Existing convention: never load `astro:env` in API tests |
+| unit + integration | Vitest | 5.x | `vitest.config.ts` (Vite `defineConfig`, not Astro `getViteConfig`); `environment: node`; colocated `src/**/*.test.ts`; 13 files (sparse; cluster in services/schemas/API) |
+| API mocking | `vi.mock` of `@/lib/supabase` | n/a | Existing convention: never load `astro:env` in API tests |
 | e2e | none yet — see §3 Phase 1 | — | Astro docs: Playwright for e2e. Use only if research shows the path-helper cannot see the cookie session (Risk #3) |
 | accessibility | none yet | — | Not a top-N risk; do not add in this rollout |
-| Workers runtime tests | not migrating | — | Cloudflare docs (checked: 2026-09-07): Vitest plugin is the Workers path; Jest Workers env discontinued. Keep Jest — project convention. Do not switch runners here |
+| Workers runtime tests | not in use | — | Cloudflare Vitest pool/Miniflare is a separate later layer; unit tests stay on node |
 | (optional) AI-native | none this rollout — checked: 2026-09-07 | n/a | When NOT to use: vision/hooks on ranking, isolation, or freshness — deterministic fixtures already give the signal |
 
-**Test-base profile:** sparse — Jest configured, 13 test files, clustered in `src/lib` + `src/pages/api`; React islands, RLS, and session e2e are bare.
+**Test-base profile:** sparse — Vitest configured, 13 test files, clustered in `src/lib` + `src/pages/api`; React islands, RLS, and session e2e are bare.
 
 **Stack grounding tools (current session):**
-- Docs: Context7 — Jest 30 + ts-jest, Astro testing (Vitest Container API + Playwright), Playwright intro; checked: 2026-09-07
-- Search: Exa.ai — rate-limited this session, not used; checked: 2026-09-07
-- Runtime/browser: Playwright MCP / browser MCP — not available in current session; checked: 2026-09-07
-- Provider/platform: Cloudflare docs MCP — Workers Vitest plugin / Miniflare; GitHub MCP not in session; checked: 2026-09-07
+- Docs: Context7 — Vitest 5 config/globals/`vi.mock`; Astro testing (`getViteConfig` not used — lightweight Vite config chosen); checked: 2026-09-08
+- Search: Exa.ai — Vitest CLI `related --run` + Astro testing page; checked: 2026-09-08
+- Runtime/browser: Playwright MCP / browser MCP — not used for this runner swap; checked: 2026-09-08
+- Provider/platform: Cloudflare Workers Vitest pool not adopted; GitHub MCP not in session; checked: 2026-09-08
 
 ## 5. Quality Gates
 
@@ -131,11 +131,11 @@ TBD — see §3 Phase 2 for two-household isolation/IDOR and list-after-write re
 ### 6.3 Adding a session-level / e2e test
 
 - **Location**: colocated `src/lib/protected-routes.test.ts` (same module as `isProtectedPath`).
-- **Pattern**: session-level proof is Jest on `shouldRedirectUnauthenticated(pathname, user)`, not a browser tour. Middleware must call that helper for the unauthenticated redirect.
+- **Pattern**: session-level proof is Vitest on `shouldRedirectUnauthenticated(pathname, user)`, not a browser tour. Middleware must call that helper for the unauthenticated redirect.
 - **Cases to prove**: guest `/` → redirect (true); `/auth/signin` with no user → no redirect (false); signed-in `/` → no redirect (false).
 - **Run locally**: `npm test` (already in CI). No new workflow YAML for this layer.
 - **When NOT to use Playwright / a page tour**: do not add e2e for `/` gating while this helper is the control. Reach for Playwright later only if a risk is real cookies or the Workers runtime, after this suite is still green.
-- **Anti-pattern**: importing `src/middleware.ts` in Jest (`astro:middleware` / `astro:env`); a full-app Playwright suite for every page.
+- **Anti-pattern**: importing `src/middleware.ts` in Vitest (`astro:middleware` / `astro:env`); a full-app Playwright suite for every page.
 
 ### 6.4 Adding a test for a new API endpoint
 
@@ -161,8 +161,8 @@ contributors should respect these unless the underlying assumption changes.
 ## 8. Freshness Ledger
 
 - Strategy (§1–§5) last reviewed: 2026-09-07
-- Stack versions last verified: 2026-09-07
-- AI-native tool references last verified: 2026-09-07
+- Stack versions last verified: 2026-09-08
+- AI-native tool references last verified: 2026-09-08
 
 Refresh (`/10x-test-plan --refresh`) when:
 

@@ -16,11 +16,11 @@ interface QueryResult {
 }
 
 function createQueryBuilder(result: QueryResult) {
-  const eq = jest.fn();
-  const order = jest.fn();
-  const select = jest.fn();
-  const del = jest.fn();
-  const single = jest.fn();
+  const eq = vi.fn();
+  const order = vi.fn();
+  const select = vi.fn();
+  const del = vi.fn();
+  const single = vi.fn();
 
   const builder: {
     select: (...args: unknown[]) => unknown;
@@ -58,8 +58,8 @@ function createQueryBuilder(result: QueryResult) {
 
 function createClient(fromResult: QueryResult, rpcResult?: QueryResult) {
   const query = createQueryBuilder(fromResult);
-  const from = jest.fn(() => query.builder);
-  const rpc = jest.fn().mockResolvedValue(rpcResult ?? { data: null, error: null });
+  const from = vi.fn(() => query.builder);
+  const rpc = vi.fn().mockResolvedValue(rpcResult ?? { data: null, error: null });
   return { client: { from, rpc } as unknown as SupabaseClient<Database>, from, rpc, query };
 }
 
