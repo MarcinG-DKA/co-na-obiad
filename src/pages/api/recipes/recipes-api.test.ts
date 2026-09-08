@@ -86,7 +86,7 @@ function context(
     request,
     cookies: {} as APIContext["cookies"],
     params: { id: overrides.id ?? "recipe-1" },
-  } as APIContext;
+  } as unknown as APIContext;
 }
 
 async function read(res: Response): Promise<{ status: number; body: unknown }> {
@@ -96,7 +96,7 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 describe("GET /api/recipes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -129,7 +129,7 @@ describe("GET /api/recipes", () => {
 describe("POST /api/recipes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 400 for invalid JSON", async () => {
@@ -171,7 +171,7 @@ describe("POST /api/recipes", () => {
 describe("GET /api/recipes/:id", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {
@@ -192,7 +192,7 @@ describe("GET /api/recipes/:id", () => {
 describe("PATCH /api/recipes/:id", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {
@@ -206,7 +206,7 @@ describe("PATCH /api/recipes/:id", () => {
 describe("DELETE /api/recipes/:id", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {

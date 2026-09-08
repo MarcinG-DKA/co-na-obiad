@@ -71,7 +71,7 @@ function context(
     request,
     cookies: {} as APIContext["cookies"],
     params: { id: overrides.id ?? "item-1" },
-  } as APIContext;
+  } as unknown as APIContext;
 }
 
 async function read(res: Response): Promise<{ status: number; body: unknown }> {
@@ -81,7 +81,7 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 describe("GET /api/pantry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -114,7 +114,7 @@ describe("GET /api/pantry", () => {
 describe("POST /api/pantry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 400 for invalid JSON", async () => {
@@ -145,7 +145,7 @@ describe("POST /api/pantry", () => {
 describe("PATCH /api/pantry/:id", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the item is missing", async () => {
@@ -161,7 +161,7 @@ describe("PATCH /api/pantry/:id", () => {
 describe("DELETE /api/pantry/:id", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the item is missing", async () => {

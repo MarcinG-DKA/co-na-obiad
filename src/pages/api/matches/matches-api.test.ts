@@ -42,7 +42,7 @@ function context(
     },
     request: new Request("http://localhost/api/matches", { method: "GET" }),
     cookies: {} as APIContext["cookies"],
-  } as APIContext;
+  } as unknown as APIContext;
 }
 
 async function read(res: Response): Promise<{ status: number; body: unknown }> {
@@ -52,7 +52,7 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 describe("GET /api/matches", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCreateClient.mockReturnValue({});
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 401 when unauthenticated", async () => {
