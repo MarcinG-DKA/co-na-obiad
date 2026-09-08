@@ -126,7 +126,27 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test
 
-TBD — see §3 Phase 2 for two-household isolation/IDOR and list-after-write re-rank patterns.
+- **Location**: store-backed cases colocated with the service (`pantry.test.ts`,
+  `recipe.test.ts`). `listMatches` isolation and list-after-write live in
+  `matching-store.test.ts` — not `matching.test.ts`, which mocks the loaders.
+  Unmocked pantry PATCH wiring: `pantry-idor-api.test.ts`. Current household:
+  `household.test.ts`.
+- **Fake**: `src/test/supabase-fake.ts` (`createSupabaseFake`). Sequential `eq`
+  is AND on in-memory rows. This is not RLS and does not run Postgres.
+- **Cookie / current household**: `resolveHouseholdId` uses a
+  `current_household_id` cookie only if it is a membership. Join is allowed
+  (cookie B + memberships A and B → B). Isolation is non-member of B, not
+  “any second household.”
+- **Isolation**: seed both `hh-A` and `hh-B` in one store. A’s list/get omit
+  B’s rows; `listMatches(A)` recipe titles do not include B’s.
+- **IDOR**: foreign id as A is **404**, not 403; B’s row remains. There is no
+  PUT. Do not mock the service for the foreign-id case.
+- **List-after-write (US-02)**: two `listMatches` calls on the same store
+  (before and after `addPantryItem` / `saveRecipe`). Assert score and/or
+  `missingNames` changed. Do not use Playwright; do not mock `listMatches`.
+- **Anti-pattern**: happy-path-only as household A; a test named “RLS”;
+  mocked-service 404 as ownership; kitchen-flow e2e for re-rank.
+- **Run locally**: `npm test`
 
 ### 6.3 Adding a session-level / e2e test
 
@@ -139,7 +159,21 @@ TBD — see §3 Phase 2 for two-household isolation/IDOR and list-after-write re
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 2 for `{ data, error }` JSON routes: session household, Zod body, mock `@/lib/supabase`, never trust a client household id.
+- **Location**: colocated `*-api.test.ts` next to the route
+  (`src/pages/api/pantry/pantry-api.test.ts`).
+- **Mock**: `vi.mock("@/lib/supabase")` so `astro:env` never loads. Inject
+  `locals.user` and `locals.householdId` on a hand-built `APIContext` —
+  middleware is bypassed.
+- **Body**: validate with Zod. Household comes from locals, never the body.
+  Extra-key POST `{ name, household_id }` must still call the service with
+  the locals household and a payload without `household_id`.
+- **Envelope vs ownership**: 401 / 400 / envelope 404 stay mocked-service.
+  **Ownership / IDOR** uses `createSupabaseFake` and does **not** mock the
+  service (`pantry-idor-api.test.ts`). Never trust a client household id.
+  Foreign id is 404, not 403.
+- **Anti-pattern**: 401 unauthenticated as an IDOR proof; mocking the service
+  so the handler never sees a foreign id; importing `src/middleware.ts`.
+- **Run locally**: `npm test`
 
 ### 6.5 Adding a freshness / date-threshold test
 
@@ -148,6 +182,7 @@ TBD — see §3 Phase 3 for empty vs stale vs load-error (Risk #6); elapsed 168h
 ### 6.6 Per-rollout-phase notes
 
 - **§3 Phase 1 (`testing-critical-path-coverage`)**: matching oracle gaps live in `matching.test.ts`; `/` session gate is `shouldRedirectUnauthenticated` in `protected-routes.test.ts`, not Playwright.
+- **§3 Phase 2 (`testing-isolation-around-apis`)**: isolation/IDOR/re-rank use `src/test/supabase-fake.ts`; cookie must be a membership; foreign id is 404; list-after-write is `listMatches`, not Playwright.
 
 ## 7. What We Deliberately Don't Test
 

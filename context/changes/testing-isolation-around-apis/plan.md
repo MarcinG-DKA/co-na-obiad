@@ -409,22 +409,22 @@ None. No production behavior change intended. If a test fails on current code, t
 
 #### Automated
 
-- [x] 4.1 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `addPantryItem`
-- [x] 4.2 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `saveRecipe`
-- [x] 4.3 Unit tests pass: `npm test`
-- [x] 4.4 Linting passes: `npm run lint`
+- [x] 4.1 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `addPantryItem` — 1978416
+- [x] 4.2 `matching-store.test.ts` asserts `listMatches` scores/missing names change after `saveRecipe` — 1978416
+- [x] 4.3 Unit tests pass: `npm test` — 1978416
+- [x] 4.4 Linting passes: `npm run lint` — 1978416
 
 #### Manual
 
-- [x] 4.5 Before/after expected values are independent fixtures (readable names and a stated delta), not copied scorer internals; `matching.test.ts` loader-mock wiring tests remain for parallel-load/errors only
+- [x] 4.5 Before/after expected values are independent fixtures (readable names and a stated delta), not copied scorer internals; `matching.test.ts` loader-mock wiring tests remain for parallel-load/errors only — 1978416
 
 ### Phase 5: Cookbook §6.2 and §6.4
 
 #### Automated
 
-- [ ] 5.1 `context/foundation/test-plan.md` §6.2 and §6.4 no longer contain `TBD — see §3 Phase 2`
-- [ ] 5.2 `npm test` still passes: `npm test`
+- [x] 5.1 `context/foundation/test-plan.md` §6.2 and §6.4 no longer contain `TBD — see §3 Phase 2`
+- [x] 5.2 `npm test` still passes: `npm test`
 
 #### Manual
 
-- [ ] 5.3 A reader of §6.2 / §6.4 can name the fake, 404-not-403, “cookie must be a membership,” and list-after-write as `listMatches` (not Playwright) without opening this plan
+- [x] 5.3 A reader of §6.2 / §6.4 can name the fake, 404-not-403, “cookie must be a membership,” and list-after-write as `listMatches` (not Playwright) without opening this plan
