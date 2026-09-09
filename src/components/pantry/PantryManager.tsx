@@ -140,6 +140,7 @@ export default function PantryManager({ initialItems }: Props) {
             ref={nameInputRef}
             type="text"
             placeholder="Item name..."
+            aria-label="Item name"
             value={newName}
             onChange={(e) => {
               setNewName(e.target.value);
@@ -150,6 +151,7 @@ export default function PantryManager({ initialItems }: Props) {
           <Button
             type="submit"
             disabled={isAdding || !newName.trim()}
+            aria-label="Add item"
             className="bg-purple-600 text-white hover:bg-purple-500"
           >
             <Plus className="size-4" />
@@ -159,6 +161,7 @@ export default function PantryManager({ initialItems }: Props) {
           <Input
             type="number"
             placeholder="Qty"
+            aria-label="Quantity"
             value={newQuantity}
             onChange={(e) => {
               setNewQuantity(e.target.value);
