@@ -284,32 +284,32 @@ None. Production behavior of MIN, 168h, and loadError UI must not change. The vi
 
 #### Automated
 
-- [x] 1.1 `src/lib/pantry-freshness.test.ts` asserts the five view-helper cases (`kind` + `showNudge` only)
-- [x] 1.2 `src/lib/pantry-freshness.ts` exports the helper; `PantryFreshness.tsx` calls it for error vs empty vs nudge
-- [x] 1.3 Unit tests pass: `npm test`
-- [x] 1.4 Linting passes: `npm run lint`
+- [x] 1.1 `src/lib/pantry-freshness.test.ts` asserts the five view-helper cases (`kind` + `showNudge` only) — e7693c2
+- [x] 1.2 `src/lib/pantry-freshness.ts` exports the helper; `PantryFreshness.tsx` calls it for error vs empty vs nudge — e7693c2
+- [x] 1.3 Unit tests pass: `npm test` — e7693c2
+- [x] 1.4 Linting passes: `npm run lint` — e7693c2
 
 #### Manual
 
-- [x] 1.5 Helper tests do not snapshot nudge / empty / error English as the oracle
-- [x] 1.6 `PantryFreshness.tsx` does not call `evaluatePantryFreshness` on the `loadError` path
-- [x] 1.7 No jsdom, Playwright, or `index.astro` import was added
+- [x] 1.5 Helper tests do not snapshot nudge / empty / error English as the oracle — e7693c2
+- [x] 1.6 `PantryFreshness.tsx` does not call `evaluatePantryFreshness` on the `loadError` path — e7693c2
+- [x] 1.7 No jsdom, Playwright, or `index.astro` import was added — e7693c2
 
 ### Phase 2: MIN freshness and reframed delete
 
 #### Automated
 
-- [ ] 2.1 `createSupabaseFake` supports `.limit()` and `.maybeSingle()`; 0-row `maybeSingle` is `{ data: null, error: null }`, not PGRST116
-- [ ] 2.2 `pantry.test.ts` fake-store cases: mixed-age MIN (B’s older row ignored); delete stalest; delete fresher; delete last → `null`
-- [ ] 2.3 Existing query-shape mock for `getPantryLastUpdatedAt` remains (select / order / limit / maybeSingle / throw-on-error)
-- [ ] 2.4 Unit tests pass: `npm test`
-- [ ] 2.5 Linting passes: `npm run lint`
+- [x] 2.1 `createSupabaseFake` supports `.limit()` and `.maybeSingle()`; 0-row `maybeSingle` is `{ data: null, error: null }`, not PGRST116
+- [x] 2.2 `pantry.test.ts` fake-store cases: mixed-age MIN (B’s older row ignored); delete stalest; delete fresher; delete last → `null`
+- [x] 2.3 Existing query-shape mock for `getPantryLastUpdatedAt` remains (select / order / limit / maybeSingle / throw-on-error)
+- [x] 2.4 Unit tests pass: `npm test`
+- [x] 2.5 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.6 `maybeSingle` is not implemented as a call through `single()` / `toSingle`
-- [ ] 2.7 The mock it that echoes one timestamp is not treated as the MIN oracle (name or comment makes that obvious)
-- [ ] 2.8 No new API envelope cases and no jsdom
+- [x] 2.6 `maybeSingle` is not implemented as a call through `single()` / `toSingle`
+- [x] 2.7 The mock it that echoes one timestamp is not treated as the MIN oracle (name or comment makes that obvious)
+- [x] 2.8 No new API envelope cases and no jsdom
 
 ### Phase 3: Cookbook §6.5 / §6.6 and CI sentence lock
 

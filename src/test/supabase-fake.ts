@@ -293,6 +293,23 @@ function toSingle(rows: unknown[]): QueryResult {
   return { data: rows[0], error: null };
 }
 
+function toMaybeSingle(rows: unknown[]): QueryResult {
+  if (rows.length === 0) {
+    return { data: null, error: null };
+  }
+  if (rows.length === 1) {
+    return { data: rows[0], error: null };
+  }
+  return NO_ROWS;
+}
+
+function applyLimit<T>(rows: T[], limitCount: number | undefined): T[] {
+  if (limitCount === undefined) {
+    return rows;
+  }
+  return rows.slice(0, limitCount);
+}
+
 function runSaveRecipe(store: Store, fn: string, args: Record<string, unknown>): QueryResult {
   if (fn !== "save_recipe") {
     return { data: null, error: { message: `Unknown rpc: ${fn}` } };
@@ -339,6 +356,29 @@ function createQuery(store: Store, table: string) {
   let insertRow: Record<string, unknown> | null = null;
   let updatePatch: Record<string, unknown> | null = null;
   let deleting = false;
+  let limitCount: number | undefined;
+
+  function limitedPantrySelect(): PantryRow[] {
+    return applyLimit(
+      sortPantry(
+        store.pantryItems.filter((row) => pantryMatches(row, filters)),
+        orders,
+      ).map((row) => ({
+        ...row,
+      })),
+      limitCount,
+    );
+  }
+
+  function limitedRecipeSelect(): Record<string, unknown>[] {
+    return applyLimit(
+      sortRecipes(
+        store.recipes.filter((row) => recipeMatches(row, filters)),
+        orders,
+      ).map((row) => projectRecipe(row, select)),
+      limitCount,
+    );
+  }
 
   function executePantry(wantSingle: boolean): QueryResult {
     if (deleting) {
@@ -381,12 +421,7 @@ function createQuery(store: Store, table: string) {
       return wantSingle ? toSingle(updated) : { data: updated, error: null };
     }
 
-    const rows = sortPantry(
-      store.pantryItems.filter((row) => pantryMatches(row, filters)),
-      orders,
-    ).map((row) => ({
-      ...row,
-    }));
+    const rows = limitedPantrySelect();
     return wantSingle ? toSingle(rows) : { data: rows, error: null };
   }
 
@@ -405,10 +440,7 @@ function createQuery(store: Store, table: string) {
       return { data: null, error: null, count };
     }
 
-    const rows = sortRecipes(
-      store.recipes.filter((row) => recipeMatches(row, filters)),
-      orders,
-    ).map((row) => projectRecipe(row, select));
+    const rows = limitedRecipeSelect();
     return wantSingle ? toSingle(rows) : { data: rows, error: null };
   }
 
@@ -420,6 +452,24 @@ function createQuery(store: Store, table: string) {
       return executeRecipes(wantSingle);
     }
     return { data: wantSingle ? null : [], error: { message: `Unknown table: ${table}` } };
+  }
+
+  function executeMaybeSingle(): QueryResult {
+    if (deleting || insertRow || updatePatch) {
+      const result = execute(false);
+      if (result.error) {
+        return result;
+      }
+      const rows = Array.isArray(result.data) ? result.data : [];
+      return toMaybeSingle(rows);
+    }
+    if (table === "pantry_items") {
+      return toMaybeSingle(limitedPantrySelect());
+    }
+    if (table === "recipes") {
+      return toMaybeSingle(limitedRecipeSelect());
+    }
+    return { data: null, error: { message: `Unknown table: ${table}` } };
   }
 
   const builder = {
@@ -453,8 +503,15 @@ function createQuery(store: Store, table: string) {
       });
       return builder;
     },
+    limit(count: number) {
+      limitCount = count;
+      return builder;
+    },
     single() {
       return Promise.resolve(execute(true));
+    },
+    maybeSingle() {
+      return Promise.resolve(executeMaybeSingle());
     },
     then<TResult1 = QueryResult, TResult2 = never>(
       onfulfilled?: ((value: QueryResult) => TResult1 | PromiseLike<TResult1>) | null,
