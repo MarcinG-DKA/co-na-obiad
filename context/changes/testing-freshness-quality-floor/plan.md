@@ -315,15 +315,15 @@ None. Production behavior of MIN, 168h, and loadError UI must not change. The vi
 
 #### Automated
 
-- [x] 3.1 `context/foundation/test-plan.md` §6.5 no longer contains `TBD — see §3 Phase 3`
-- [x] 3.2 `context/foundation/test-plan.md` §6.6 includes a Phase 3 floor + freshness note
-- [x] 3.3 `CLAUDE.md` CI paragraph names lint, test, and build on `main`
-- [x] 3.4 `AGENTS.md` PR paragraph names lint, test, and build on `main`
-- [x] 3.5 `.github/workflows/` still contains only `ci.yml` (no new YAML)
-- [x] 3.6 `npm test` still passes: `npm test`
+- [x] 3.1 `context/foundation/test-plan.md` §6.5 no longer contains `TBD — see §3 Phase 3` — 373013e
+- [x] 3.2 `context/foundation/test-plan.md` §6.6 includes a Phase 3 floor + freshness note — 373013e
+- [x] 3.3 `CLAUDE.md` CI paragraph names lint, test, and build on `main` — 373013e
+- [x] 3.4 `AGENTS.md` PR paragraph names lint, test, and build on `main` — 373013e
+- [x] 3.5 `.github/workflows/` still contains only `ci.yml` (no new YAML) — 373013e
+- [x] 3.6 `npm test` still passes: `npm test` — 373013e
 
 #### Manual
 
-- [x] 3.7 A reader of §6.5 can name injected `now`, boolean oracles, MIN vs MAX, empty vs `loadError`, and “when not Playwright” without opening this plan
-- [x] 3.8 A reader of §6.6 / agent rules would not add `ci-tests.yml` or add `npm test` as a missing step
-- [x] 3.9 Test-plan §1–§5 body (risk table, file counts, “build typechecks”) was not rewritten
+- [x] 3.7 A reader of §6.5 can name injected `now`, boolean oracles, MIN vs MAX, empty vs `loadError`, and “when not Playwright” without opening this plan — 373013e
+- [x] 3.8 A reader of §6.6 / agent rules would not add `ci-tests.yml` or add `npm test` as a missing step — 373013e
+- [x] 3.9 Test-plan §1–§5 body (risk table, file counts, “build typechecks”) was not rewritten — 373013e
