@@ -32,7 +32,7 @@ API handlers validate with Zod. Extract React hooks to `src/components/hooks/`. 
 
 ## Testing
 
-Vitest (`npm test` → `vitest run`) with a node environment and `vitest.config.ts` (`@/` alias only — does not load Astro config). Colocate `*.test.ts` next to the module under test (`src/lib/services/pantry.test.ts`, `src/pages/api/pantry/pantry-api.test.ts`). CI runs `npm test` after lint. Mock `@/lib/supabase` in API tests so `astro:env` is never loaded. Watch: `npm run test:watch`. Scoped per-edit: `npx vitest related "$FILE" --run`.
+Vitest (`npm test` → `vitest run`) with a node environment and `vitest.config.ts` (`@/` alias only — does not load Astro config). Colocate `*.test.ts` next to the module under test (`src/lib/services/pantry.test.ts`, `src/pages/api/pantry/pantry-api.test.ts`). CI runs `npm test` after lint. Mock `@/lib/supabase` in API tests so `astro:env` is never loaded. Watch: `npm run test:watch`. Scoped per-edit: `npx vitest related "$FILE" --run`. Playwright: `npm run test:e2e` (Chromium job in `.github/workflows/ci.yml`).
 
 # E2E Testing Rules
 
@@ -51,7 +51,7 @@ Vitest (`npm test` → `vitest run`) with a node environment and `vitest.config.
 
 ## Commit and Pull Request Guidelines
 
-Conventional Commits prefixes (`chore:`, etc.). PRs target `main`; CI runs lint + test + build (`.github/workflows/ci.yml`). Repo secrets: `SUPABASE_URL`, `SUPABASE_KEY`.
+Conventional Commits prefixes (`chore:`, etc.). PRs target `main`; CI runs lint + test + build, then a Chromium Playwright job (`.github/workflows/ci.yml`). Repo secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `E2E_EMAIL`, `E2E_PASSWORD`.
 
 ## Security and Configuration
 
