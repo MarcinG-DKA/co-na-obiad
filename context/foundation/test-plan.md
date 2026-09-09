@@ -67,7 +67,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Critical-path coverage | Prove matching contract with an independent oracle, and that `/` is session-gated | #1, #3 | unit + one session-level test | complete | testing-critical-path-coverage |
 | 2 | Isolation around APIs | Prove two-household isolation/IDOR and that writes re-rank the list | #2, #4, #5 | integration | complete | testing-isolation-around-apis |
-| 3 | Freshness + quality floor | Close remaining freshness gaps; lock CI lint/test/build as the floor; fill cookbook §6 | #6 + cross-cutting | unit (gap-fill) + gates | not started | — |
+| 3 | Freshness + quality floor | Close remaining freshness gaps; lock CI lint/test/build as the floor; fill cookbook §6 | #6 + cross-cutting | unit (gap-fill) + gates | change opened | testing-freshness-quality-floor |
 
 ## 4. Stack
 

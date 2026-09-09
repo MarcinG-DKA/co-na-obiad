@@ -7,6 +7,11 @@ export interface PantryFreshness {
   isStale: boolean;
 }
 
+export interface PantryFreshnessView {
+  kind: "error" | "empty" | "ok";
+  showNudge: boolean;
+}
+
 function elapsedMs(lastUpdatedAt: string, now: Date): number {
   return Math.max(0, now.getTime() - Date.parse(lastUpdatedAt));
 }
@@ -25,6 +30,23 @@ export function evaluatePantryFreshness(lastUpdatedAt: string | null, now: Date)
     isEmpty: false,
     isStale: elapsedMs(lastUpdatedAt, now) >= STALE_AFTER_MS,
   };
+}
+
+export function resolvePantryFreshnessView(
+  lastUpdatedAt: string | null,
+  loadError: boolean,
+  now: Date,
+): PantryFreshnessView {
+  if (loadError) {
+    return { kind: "error", showNudge: false };
+  }
+
+  const freshness = evaluatePantryFreshness(lastUpdatedAt, now);
+  if (freshness.isEmpty) {
+    return { kind: "empty", showNudge: false };
+  }
+
+  return { kind: "ok", showNudge: freshness.isStale };
 }
 
 export function formatPantryLastUpdated(freshness: PantryFreshness, now: Date): string {
