@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": ".cursor/hooks/related-tests.sh",
+        "matcher": "Write|StrReplace|Edit",
+        "timeout": 30
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/related-tests.sh",
+        "matcher": "TabWrite",
+        "timeout": 30
+      }
+    ]
+  }
+}

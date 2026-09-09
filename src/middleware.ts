@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { createClient } from "@/lib/supabase";
-import { isProtectedPath } from "@/lib/protected-routes";
+import { shouldRedirectUnauthenticated } from "@/lib/protected-routes";
 import {
   CURRENT_HOUSEHOLD_COOKIE,
   householdCookieOptions,
@@ -38,7 +38,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  if (isProtectedPath(context.url.pathname) && !context.locals.user) {
+  if (shouldRedirectUnauthenticated(context.url.pathname, context.locals.user)) {
     return context.redirect("/auth/signin");
   }
 

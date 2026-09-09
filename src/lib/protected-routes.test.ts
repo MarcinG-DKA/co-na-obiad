@@ -1,4 +1,4 @@
-import { isProtectedPath } from "@/lib/protected-routes";
+import { isProtectedPath, shouldRedirectUnauthenticated } from "@/lib/protected-routes";
 
 describe("isProtectedPath", () => {
   it("protects exact / without implying /auth/signin", () => {
@@ -23,5 +23,19 @@ describe("isProtectedPath", () => {
 
   it("does not protect /dashboard (missing page, not a gated alias)", () => {
     expect(isProtectedPath("/dashboard")).toBe(false);
+  });
+});
+
+describe("shouldRedirectUnauthenticated", () => {
+  it("redirects a guest away from /", () => {
+    expect(shouldRedirectUnauthenticated("/", null)).toBe(true);
+  });
+
+  it("does not redirect a guest on /auth/signin", () => {
+    expect(shouldRedirectUnauthenticated("/auth/signin", null)).toBe(false);
+  });
+
+  it("does not redirect a signed-in user on /", () => {
+    expect(shouldRedirectUnauthenticated("/", { id: "user-1" })).toBe(false);
   });
 });

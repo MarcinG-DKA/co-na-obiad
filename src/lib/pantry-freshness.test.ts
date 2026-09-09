@@ -3,6 +3,7 @@ import {
   evaluatePantryFreshness,
   formatPantryItemNeedsReview,
   formatPantryLastUpdated,
+  resolvePantryFreshnessView,
 } from "@/lib/pantry-freshness";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -50,6 +51,43 @@ describe("evaluatePantryFreshness", () => {
       lastUpdatedAt,
       isEmpty: false,
       isStale: false,
+    });
+  });
+});
+
+describe("resolvePantryFreshnessView", () => {
+  it("treats a load error with null last-updated as error, not empty", () => {
+    expect(resolvePantryFreshnessView(null, true, NOW)).toEqual({
+      kind: "error",
+      showNudge: false,
+    });
+  });
+
+  it("treats a successful load with null last-updated as empty and not a nudge", () => {
+    expect(resolvePantryFreshnessView(null, false, NOW)).toEqual({
+      kind: "empty",
+      showNudge: false,
+    });
+  });
+
+  it("keeps a load error as error even when a stale timestamp is present", () => {
+    expect(resolvePantryFreshnessView(at(-STALE_AFTER_MS), true, NOW)).toEqual({
+      kind: "error",
+      showNudge: false,
+    });
+  });
+
+  it("shows the nudge when a successful load is stale", () => {
+    expect(resolvePantryFreshnessView(at(-STALE_AFTER_MS), false, NOW)).toEqual({
+      kind: "ok",
+      showNudge: true,
+    });
+  });
+
+  it("hides the nudge when a successful load is under 7 elapsed days", () => {
+    expect(resolvePantryFreshnessView(at(-(STALE_AFTER_MS - 60 * 60 * 1000)), false, NOW)).toEqual({
+      kind: "ok",
+      showNudge: false,
     });
   });
 });

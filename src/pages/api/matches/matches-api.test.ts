@@ -1,23 +1,24 @@
 import type { APIContext } from "astro";
 import { createClient } from "@/lib/supabase";
 import { listMatches } from "@/lib/services/matching";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/supabase", () => ({
-  createClient: jest.fn(),
+vi.mock("@/lib/supabase", () => ({
+  createClient: vi.fn(),
 }));
 
-jest.mock("@/lib/services/matching", () => {
-  const actual = jest.requireActual<typeof import("@/lib/services/matching")>("@/lib/services/matching");
+vi.mock("@/lib/services/matching", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/services/matching")>();
   return {
     ...actual,
-    listMatches: jest.fn(),
+    listMatches: vi.fn(),
   };
 });
 
 import { GET } from "@/pages/api/matches/index";
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
-const mockListMatches = listMatches as jest.MockedFunction<typeof listMatches>;
+const mockCreateClient = createClient as MockedFunction<typeof createClient>;
+const mockListMatches = listMatches as MockedFunction<typeof listMatches>;
 
 const sampleMatch = {
   recipeId: "omelette",
@@ -41,7 +42,7 @@ function context(
     },
     request: new Request("http://localhost/api/matches", { method: "GET" }),
     cookies: {} as APIContext["cookies"],
-  } as APIContext;
+  } as unknown as APIContext;
 }
 
 async function read(res: Response): Promise<{ status: number; body: unknown }> {
@@ -50,8 +51,8 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 
 describe("GET /api/matches", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 401 when unauthenticated", async () => {

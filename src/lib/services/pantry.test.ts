@@ -6,6 +6,7 @@ import {
   removePantryItem,
   updatePantryItem,
 } from "@/lib/services/pantry";
+import { createSupabaseFake } from "@/test/supabase-fake";
 import type { Database } from "@/db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -16,15 +17,15 @@ interface QueryResult {
 }
 
 function createQueryBuilder(result: QueryResult) {
-  const eq = jest.fn();
-  const order = jest.fn();
-  const select = jest.fn();
-  const insert = jest.fn();
-  const update = jest.fn();
-  const del = jest.fn();
-  const single = jest.fn();
-  const limit = jest.fn();
-  const maybeSingle = jest.fn();
+  const eq = vi.fn();
+  const order = vi.fn();
+  const select = vi.fn();
+  const insert = vi.fn();
+  const update = vi.fn();
+  const del = vi.fn();
+  const single = vi.fn();
+  const limit = vi.fn();
+  const maybeSingle = vi.fn();
 
   const builder: {
     select: (...args: unknown[]) => unknown;
@@ -82,7 +83,7 @@ function createQueryBuilder(result: QueryResult) {
 
 function createClient(result: QueryResult) {
   const query = createQueryBuilder(result);
-  const from = jest.fn(() => query.builder);
+  const from = vi.fn(() => query.builder);
   return { client: { from } as unknown as SupabaseClient<Database>, from, query };
 }
 
@@ -123,7 +124,8 @@ describe("getPantryLastUpdatedAt", () => {
     expect(query.maybeSingle).toHaveBeenCalled();
   });
 
-  it("returns the oldest updated_at", async () => {
+  // Query-shape mock: echoes one string. Mixed-age MIN is proven against createSupabaseFake below.
+  it("echoes a single mocked updated_at", async () => {
     const { client } = createClient({ data: { updated_at: "2026-09-02T00:00:00Z" }, error: null });
     await expect(getPantryLastUpdatedAt(client, "hh-1")).resolves.toBe("2026-09-02T00:00:00Z");
   });
@@ -181,5 +183,105 @@ describe("removePantryItem", () => {
   it("resolves when a row is deleted", async () => {
     const { client } = createClient({ data: null, error: null, count: 1 });
     await expect(removePantryItem(client, "item-1", "hh-1")).resolves.toBeUndefined();
+  });
+});
+
+describe("getPantryLastUpdatedAt against a fake store", () => {
+  const staleIso = "2026-08-28T12:00:00.000Z";
+  const freshIso = "2026-09-06T12:00:00.000Z";
+  const foreignOlderIso = "2026-08-01T12:00:00.000Z";
+
+  it("returns household A's oldest updated_at and ignores B's older row", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [
+        { id: "a-fresh", household_id: "hh-A", name: "milk", updated_at: freshIso },
+        { id: "a-stale", household_id: "hh-A", name: "eggs", updated_at: staleIso },
+        { id: "b-pickle", household_id: "hh-B", name: "pickles", updated_at: foreignOlderIso },
+      ],
+    });
+
+    await expect(getPantryLastUpdatedAt(client, "hh-A")).resolves.toBe(staleIso);
+  });
+
+  it("returns the remaining ISO after removing the stalest row", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [
+        { id: "a-fresh", household_id: "hh-A", name: "milk", updated_at: freshIso },
+        { id: "a-stale", household_id: "hh-A", name: "eggs", updated_at: staleIso },
+      ],
+    });
+
+    await removePantryItem(client, "a-stale", "hh-A");
+
+    await expect(getPantryLastUpdatedAt(client, "hh-A")).resolves.toBe(freshIso);
+  });
+
+  it("keeps the older ISO after removing the fresher row", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [
+        { id: "a-fresh", household_id: "hh-A", name: "milk", updated_at: freshIso },
+        { id: "a-stale", household_id: "hh-A", name: "eggs", updated_at: staleIso },
+      ],
+    });
+
+    await removePantryItem(client, "a-fresh", "hh-A");
+
+    await expect(getPantryLastUpdatedAt(client, "hh-A")).resolves.toBe(staleIso);
+  });
+
+  it("returns null after removing the last row", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [{ id: "a-only", household_id: "hh-A", name: "eggs", updated_at: staleIso }],
+    });
+
+    await removePantryItem(client, "a-only", "hh-A");
+
+    await expect(getPantryLastUpdatedAt(client, "hh-A")).resolves.toBeNull();
+  });
+});
+
+describe("listPantryItems against a two-household store", () => {
+  it("returns only household A's items", async () => {
+    const client = createSupabaseFake({
+      pantryItems: [
+        { id: "a-item", household_id: "hh-A", name: "Milk" },
+        { id: "b-item", household_id: "hh-B", name: "B-only pickles" },
+      ],
+    });
+
+    const items = await listPantryItems(client, "hh-A");
+
+    expect(items.map((item) => item.id)).toEqual(["a-item"]);
+    expect(items.map((item) => item.name)).toEqual(["Milk"]);
+  });
+});
+
+function householdBPantry() {
+  return createSupabaseFake({
+    pantryItems: [{ id: "b-item", household_id: "hh-B", name: "B-only pickles" }],
+  });
+}
+
+describe("updatePantryItem against a two-household store", () => {
+  it("throws PantryNotFoundError for household B's item id as A and leaves B's row", async () => {
+    const client = householdBPantry();
+
+    await expect(updatePantryItem(client, "b-item", "hh-A", { name: "Stolen" })).rejects.toBeInstanceOf(
+      PantryNotFoundError,
+    );
+
+    const remaining = await listPantryItems(client, "hh-B");
+    expect(remaining).toEqual([expect.objectContaining({ id: "b-item", name: "B-only pickles" })]);
+  });
+});
+
+describe("removePantryItem against a two-household store", () => {
+  it("throws PantryNotFoundError for household B's item id as A and leaves B's row", async () => {
+    const client = householdBPantry();
+
+    await expect(removePantryItem(client, "b-item", "hh-A")).rejects.toBeInstanceOf(PantryNotFoundError);
+
+    const remaining = await listPantryItems(client, "hh-B");
+    expect(remaining).toEqual([expect.objectContaining({ id: "b-item", name: "B-only pickles" })]);
   });
 });

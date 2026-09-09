@@ -4,19 +4,20 @@ import { listPantryItems } from "@/lib/services/pantry";
 import type { RecipeWithIngredientNames } from "@/lib/services/recipe";
 import { listRecipesWithIngredients } from "@/lib/services/recipe";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/services/pantry", () => ({
-  listPantryItems: jest.fn(),
+vi.mock("@/lib/services/pantry", () => ({
+  listPantryItems: vi.fn(),
 }));
 
-jest.mock("@/lib/services/recipe", () => ({
-  listRecipesWithIngredients: jest.fn(),
+vi.mock("@/lib/services/recipe", () => ({
+  listRecipesWithIngredients: vi.fn(),
 }));
 
 import { listMatches, matchRecipes, normalizeName } from "@/lib/services/matching";
 
-const mockListPantry = listPantryItems as jest.MockedFunction<typeof listPantryItems>;
-const mockListRecipes = listRecipesWithIngredients as jest.MockedFunction<typeof listRecipesWithIngredients>;
+const mockListPantry = listPantryItems as MockedFunction<typeof listPantryItems>;
+const mockListRecipes = listRecipesWithIngredients as MockedFunction<typeof listRecipesWithIngredients>;
 
 function pantry(...names: string[]): Pick<PantryItem, "name" | "quantity" | "unit">[] {
   return names.map((name) => ({ name, quantity: null, unit: null }));
@@ -78,6 +79,14 @@ describe("matchRecipes", () => {
     expect(match.checkNames).toEqual([]);
   });
 
+  it("keeps the recipe's original spelling in matchedNames", () => {
+    const [match] = matchRecipes(pantry("eggs"), [recipe("omelette", "Omelette", "Eggs")]);
+    expect(match.score).toBe(1);
+    expect(match.matchedNames).toEqual(["Eggs"]);
+    expect(match.missingNames).toEqual([]);
+    expect(match.checkNames).toEqual([]);
+  });
+
   it("trims names before comparing", () => {
     const [match] = matchRecipes(pantry("  milk  "), [recipe("drink", "Drink", "milk")]);
     expect(match.score).toBe(1);
@@ -124,6 +133,18 @@ describe("matchRecipes", () => {
     ]);
 
     expect(ranked.map((match) => match.title)).toEqual(["Omelette", "Bread", "Soup"]);
+  });
+
+  it("ranks full overlap above partial and puts zero-overlap last", () => {
+    const ranked = matchRecipes(pantry("eggs", "milk"), [
+      recipe("salad", "Salad", "lettuce"),
+      recipe("cake", "Cake", "flour", "eggs"),
+      recipe("omelette", "Omelette", "eggs", "milk"),
+    ]);
+
+    expect(ranked.map((match) => match.recipeId)).toEqual(["omelette", "cake", "salad"]);
+    expect(ranked[0].score).toBe(1);
+    expect(ranked[2].score).toBe(0);
   });
 
   it("treats the ingredient as ok when units match and pantry quantity is enough", () => {

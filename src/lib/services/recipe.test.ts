@@ -6,6 +6,7 @@ import {
   removeRecipe,
   saveRecipe,
 } from "@/lib/services/recipe";
+import { createSupabaseFake } from "@/test/supabase-fake";
 import type { Database } from "@/db/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -16,11 +17,11 @@ interface QueryResult {
 }
 
 function createQueryBuilder(result: QueryResult) {
-  const eq = jest.fn();
-  const order = jest.fn();
-  const select = jest.fn();
-  const del = jest.fn();
-  const single = jest.fn();
+  const eq = vi.fn();
+  const order = vi.fn();
+  const select = vi.fn();
+  const del = vi.fn();
+  const single = vi.fn();
 
   const builder: {
     select: (...args: unknown[]) => unknown;
@@ -58,8 +59,8 @@ function createQueryBuilder(result: QueryResult) {
 
 function createClient(fromResult: QueryResult, rpcResult?: QueryResult) {
   const query = createQueryBuilder(fromResult);
-  const from = jest.fn(() => query.builder);
-  const rpc = jest.fn().mockResolvedValue(rpcResult ?? { data: null, error: null });
+  const from = vi.fn(() => query.builder);
+  const rpc = vi.fn().mockResolvedValue(rpcResult ?? { data: null, error: null });
   return { client: { from, rpc } as unknown as SupabaseClient<Database>, from, rpc, query };
 }
 
@@ -247,5 +248,61 @@ describe("removeRecipe", () => {
   it("resolves when a row is deleted", async () => {
     const { client } = createClient({ data: null, error: null, count: 1 });
     await expect(removeRecipe(client, "recipe-1", "hh-1")).resolves.toBeUndefined();
+  });
+});
+
+const storeRecipes = {
+  a: {
+    id: "a-recipe",
+    household_id: "hh-A",
+    title: "Toast",
+    ingredients: [{ name: "bread" }],
+  },
+  b: {
+    id: "b-recipe",
+    household_id: "hh-B",
+    title: "Household B Chili",
+    ingredients: [{ name: "beans" }],
+  },
+};
+
+describe("listRecipes against a two-household store", () => {
+  it("returns only household A's recipes", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.a, storeRecipes.b] });
+
+    const recipes = await listRecipes(client, "hh-A");
+
+    expect(recipes.map((recipe) => recipe.id)).toEqual(["a-recipe"]);
+    expect(recipes.map((recipe) => recipe.title)).toEqual(["Toast"]);
+  });
+});
+
+describe("getRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.a, storeRecipes.b] });
+
+    await expect(getRecipe(client, "b-recipe", "hh-A")).rejects.toBeInstanceOf(RecipeNotFoundError);
+  });
+});
+
+describe("saveRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A and leaves B's recipe", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.b] });
+
+    await expect(saveRecipe(client, "hh-A", saveInput, "b-recipe")).rejects.toBeInstanceOf(RecipeNotFoundError);
+
+    const remaining = await getRecipe(client, "b-recipe", "hh-B");
+    expect(remaining).toMatchObject({ id: "b-recipe", title: "Household B Chili" });
+  });
+});
+
+describe("removeRecipe against a two-household store", () => {
+  it("throws RecipeNotFoundError for household B's recipe id as A and leaves B's recipe", async () => {
+    const client = createSupabaseFake({ recipes: [storeRecipes.b] });
+
+    await expect(removeRecipe(client, "b-recipe", "hh-A")).rejects.toBeInstanceOf(RecipeNotFoundError);
+
+    const remaining = await getRecipe(client, "b-recipe", "hh-B");
+    expect(remaining).toMatchObject({ id: "b-recipe", title: "Household B Chili" });
   });
 });

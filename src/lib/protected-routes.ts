@@ -14,3 +14,7 @@ export function isProtectedPath(pathname: string): boolean {
   }
   return PREFIX_PROTECTED_ROUTES.some((route) => path === route || path.startsWith(`${route}/`));
 }
+
+export function shouldRedirectUnauthenticated(pathname: string, user: unknown): boolean {
+  return isProtectedPath(pathname) && user == null;
+}

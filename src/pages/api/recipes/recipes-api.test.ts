@@ -1,30 +1,31 @@
 import type { APIContext } from "astro";
 import { createClient } from "@/lib/supabase";
 import { getRecipe, listRecipes, RecipeNotFoundError, removeRecipe, saveRecipe } from "@/lib/services/recipe";
+import type { MockedFunction } from "vitest";
 
-jest.mock("@/lib/supabase", () => ({
-  createClient: jest.fn(),
+vi.mock("@/lib/supabase", () => ({
+  createClient: vi.fn(),
 }));
 
-jest.mock("@/lib/services/recipe", () => {
-  const actual = jest.requireActual<typeof import("@/lib/services/recipe")>("@/lib/services/recipe");
+vi.mock("@/lib/services/recipe", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/services/recipe")>();
   return {
     ...actual,
-    listRecipes: jest.fn(),
-    getRecipe: jest.fn(),
-    saveRecipe: jest.fn(),
-    removeRecipe: jest.fn(),
+    listRecipes: vi.fn(),
+    getRecipe: vi.fn(),
+    saveRecipe: vi.fn(),
+    removeRecipe: vi.fn(),
   };
 });
 
 import { GET, POST } from "@/pages/api/recipes/index";
 import { GET as GET_ONE, PATCH, DELETE } from "@/pages/api/recipes/[id]";
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
-const mockList = listRecipes as jest.MockedFunction<typeof listRecipes>;
-const mockGet = getRecipe as jest.MockedFunction<typeof getRecipe>;
-const mockSave = saveRecipe as jest.MockedFunction<typeof saveRecipe>;
-const mockRemove = removeRecipe as jest.MockedFunction<typeof removeRecipe>;
+const mockCreateClient = createClient as MockedFunction<typeof createClient>;
+const mockList = listRecipes as MockedFunction<typeof listRecipes>;
+const mockGet = getRecipe as MockedFunction<typeof getRecipe>;
+const mockSave = saveRecipe as MockedFunction<typeof saveRecipe>;
+const mockRemove = removeRecipe as MockedFunction<typeof removeRecipe>;
 
 const sampleListItem = {
   id: "recipe-1",
@@ -85,7 +86,7 @@ function context(
     request,
     cookies: {} as APIContext["cookies"],
     params: { id: overrides.id ?? "recipe-1" },
-  } as APIContext;
+  } as unknown as APIContext;
 }
 
 async function read(res: Response): Promise<{ status: number; body: unknown }> {
@@ -94,8 +95,8 @@ async function read(res: Response): Promise<{ status: number; body: unknown }> {
 
 describe("GET /api/recipes", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -127,8 +128,8 @@ describe("GET /api/recipes", () => {
 
 describe("POST /api/recipes", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 400 for invalid JSON", async () => {
@@ -169,8 +170,8 @@ describe("POST /api/recipes", () => {
 
 describe("GET /api/recipes/:id", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {
@@ -190,8 +191,8 @@ describe("GET /api/recipes/:id", () => {
 
 describe("PATCH /api/recipes/:id", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {
@@ -204,8 +205,8 @@ describe("PATCH /api/recipes/:id", () => {
 
 describe("DELETE /api/recipes/:id", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockCreateClient.mockReturnValue({} as ReturnType<typeof createClient>);
+    vi.clearAllMocks();
+    mockCreateClient.mockReturnValue({} as NonNullable<ReturnType<typeof createClient>>);
   });
 
   it("returns 404 when the recipe is missing", async () => {
