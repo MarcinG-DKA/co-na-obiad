@@ -36,7 +36,7 @@ Vitest (`npm test` → `vitest run`) with a node environment and `vitest.config.
 
 ## Commit and Pull Request Guidelines
 
-Conventional Commits prefixes (`chore:`, etc.). PRs target `master`; CI runs lint + build (`.github/workflows/ci.yml`). Repo secrets: `SUPABASE_URL`, `SUPABASE_KEY`.
+Conventional Commits prefixes (`chore:`, etc.). PRs target `main`; CI runs lint + test + build (`.github/workflows/ci.yml`). Repo secrets: `SUPABASE_URL`, `SUPABASE_KEY`.
 
 ## Security and Configuration
 

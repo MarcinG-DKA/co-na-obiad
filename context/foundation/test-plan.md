@@ -177,12 +177,41 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.5 Adding a freshness / date-threshold test
 
-TBD — see §3 Phase 3 for empty vs stale vs load-error (Risk #6); elapsed 168h, injected `now`.
+- **Location**: colocated `src/lib/pantry-freshness.test.ts` for elapsed
+  rules and `resolvePantryFreshnessView`. Household MIN / delete-recompute:
+  `src/lib/services/pantry.test.ts` against `createSupabaseFake`. API
+  envelope stays `src/pages/api/pantry/freshness-api.test.ts` with
+  `vi.mock("@/lib/supabase")` — that file is not a MIN oracle.
+- **Clock**: inject `now` (a fixed `Date`). Elapsed milliseconds vs
+  `STALE_AFTER_MS`. Inclusive `>=` at exactly 168h. Do not invent calendar
+  or timezone-day math.
+- **Oracle**: assert `isStale` / `isEmpty` / `kind` / `showNudge`. Copy
+  snapshots may exist for FR-007 wording; they are not the staleness or
+  nudge proof.
+- **Empty vs error**: `lastUpdatedAt === null` is empty only if the load
+  succeeded (`loadError === false`). `loadError` is a separate input.
+  `evaluatePantryFreshness(null)` is the empty case, not the load-error
+  case. The view helper short-circuits `loadError` before evaluate;
+  `showNudge` is false on both empty and error.
+- **MIN (not MAX)**: household freshness is the oldest pantry `updated_at`
+  in that household. A foreign older row must not win. The fake must
+  implement `.limit()` and `.maybeSingle()` — empty `maybeSingle` is
+  `{ data: null, error: null }`, not PGRST116 (that is `.single()`).
+  Deleting a fresher row does not change MIN. Deleting the stalest row
+  (or the last row) does.
+- **When NOT Playwright / jsdom**: do not import `src/pages/index.astro`
+  (`astro:env`) and do not add an island component test. Injected `now` +
+  booleans + the fake store are the layer.
+- **Anti-pattern**: English copy as the only assertion; treating a
+  mocked-service “oldest” echo as MIN; Playwright / jsdom; aliasing
+  `maybeSingle` to `single()` so empty looks like a load error.
+- **Run locally**: `npm test` (already in the existing CI job).
 
 ### 6.6 Per-rollout-phase notes
 
 - **§3 Phase 1 (`testing-critical-path-coverage`)**: matching oracle gaps live in `matching.test.ts`; `/` session gate is `shouldRedirectUnauthenticated` in `protected-routes.test.ts`, not Playwright.
 - **§3 Phase 2 (`testing-isolation-around-apis`)**: isolation/IDOR/re-rank use `src/test/supabase-fake.ts`; cookie must be a membership; foreign id is 404; list-after-write is `listMatches`, not Playwright.
+- **§3 Phase 3 (`testing-freshness-quality-floor`)**: freshness pattern is §6.5 (injected `now`, boolean oracles, MIN not MAX, `loadError` ≠ empty). Floor is **one** job in `.github/workflows/ci.yml`: `npm run lint` → `npm test` (`vitest run`) → `npm run build` on push/PR to `main`. Do not add a second workflow; new tests ride `npm test`. Runner is Vitest (`vi.mock`, node, `src/**/*.test.ts`), not Jest. `astro build` does not typecheck — do not document a typecheck floor CI does not run. Local lefthook ≠ CI; husky leftovers are not the hook. GitHub required checks are a repo setting, not this guide.
 
 ## 7. What We Deliberately Don't Test
 

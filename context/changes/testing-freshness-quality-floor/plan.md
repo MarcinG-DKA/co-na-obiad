@@ -299,31 +299,31 @@ None. Production behavior of MIN, 168h, and loadError UI must not change. The vi
 
 #### Automated
 
-- [x] 2.1 `createSupabaseFake` supports `.limit()` and `.maybeSingle()`; 0-row `maybeSingle` is `{ data: null, error: null }`, not PGRST116
-- [x] 2.2 `pantry.test.ts` fake-store cases: mixed-age MIN (B’s older row ignored); delete stalest; delete fresher; delete last → `null`
-- [x] 2.3 Existing query-shape mock for `getPantryLastUpdatedAt` remains (select / order / limit / maybeSingle / throw-on-error)
-- [x] 2.4 Unit tests pass: `npm test`
-- [x] 2.5 Linting passes: `npm run lint`
+- [x] 2.1 `createSupabaseFake` supports `.limit()` and `.maybeSingle()`; 0-row `maybeSingle` is `{ data: null, error: null }`, not PGRST116 — 33a8238
+- [x] 2.2 `pantry.test.ts` fake-store cases: mixed-age MIN (B’s older row ignored); delete stalest; delete fresher; delete last → `null` — 33a8238
+- [x] 2.3 Existing query-shape mock for `getPantryLastUpdatedAt` remains (select / order / limit / maybeSingle / throw-on-error) — 33a8238
+- [x] 2.4 Unit tests pass: `npm test` — 33a8238
+- [x] 2.5 Linting passes: `npm run lint` — 33a8238
 
 #### Manual
 
-- [x] 2.6 `maybeSingle` is not implemented as a call through `single()` / `toSingle`
-- [x] 2.7 The mock it that echoes one timestamp is not treated as the MIN oracle (name or comment makes that obvious)
-- [x] 2.8 No new API envelope cases and no jsdom
+- [x] 2.6 `maybeSingle` is not implemented as a call through `single()` / `toSingle` — 33a8238
+- [x] 2.7 The mock it that echoes one timestamp is not treated as the MIN oracle (name or comment makes that obvious) — 33a8238
+- [x] 2.8 No new API envelope cases and no jsdom — 33a8238
 
 ### Phase 3: Cookbook §6.5 / §6.6 and CI sentence lock
 
 #### Automated
 
-- [ ] 3.1 `context/foundation/test-plan.md` §6.5 no longer contains `TBD — see §3 Phase 3`
-- [ ] 3.2 `context/foundation/test-plan.md` §6.6 includes a Phase 3 floor + freshness note
-- [ ] 3.3 `CLAUDE.md` CI paragraph names lint, test, and build on `main`
-- [ ] 3.4 `AGENTS.md` PR paragraph names lint, test, and build on `main`
-- [ ] 3.5 `.github/workflows/` still contains only `ci.yml` (no new YAML)
-- [ ] 3.6 `npm test` still passes: `npm test`
+- [x] 3.1 `context/foundation/test-plan.md` §6.5 no longer contains `TBD — see §3 Phase 3`
+- [x] 3.2 `context/foundation/test-plan.md` §6.6 includes a Phase 3 floor + freshness note
+- [x] 3.3 `CLAUDE.md` CI paragraph names lint, test, and build on `main`
+- [x] 3.4 `AGENTS.md` PR paragraph names lint, test, and build on `main`
+- [x] 3.5 `.github/workflows/` still contains only `ci.yml` (no new YAML)
+- [x] 3.6 `npm test` still passes: `npm test`
 
 #### Manual
 
-- [ ] 3.7 A reader of §6.5 can name injected `now`, boolean oracles, MIN vs MAX, empty vs `loadError`, and “when not Playwright” without opening this plan
-- [ ] 3.8 A reader of §6.6 / agent rules would not add `ci-tests.yml` or add `npm test` as a missing step
-- [ ] 3.9 Test-plan §1–§5 body (risk table, file counts, “build typechecks”) was not rewritten
+- [x] 3.7 A reader of §6.5 can name injected `now`, boolean oracles, MIN vs MAX, empty vs `loadError`, and “when not Playwright” without opening this plan
+- [x] 3.8 A reader of §6.6 / agent rules would not add `ci-tests.yml` or add `npm test` as a missing step
+- [x] 3.9 Test-plan §1–§5 body (risk table, file counts, “build typechecks”) was not rewritten
