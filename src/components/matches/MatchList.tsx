@@ -3,6 +3,7 @@ import { BookOpen, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { readMatchesPayload, resolveMatchListView } from "@/components/matches/match-list-view";
 import type { RecipeMatch } from "@/lib/services/matching";
 
 function scorePercent(score: number): number {
@@ -39,12 +40,10 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
     try {
       const res = await fetch("/api/matches");
       const json = (await res.json()) as { data?: RecipeMatch[]; error?: string };
-      if (!res.ok) {
-        throw new Error(json.error ?? "Could not load matches");
-      }
-      setMatches(json.data ?? []);
+      setMatches(readMatchesPayload(res.ok, json));
       setHasLoadError(false);
     } catch (err) {
+      setHasLoadError(true);
       toast.error(err instanceof Error ? err.message : "Could not load matches");
     } finally {
       inFlight.current = false;
@@ -76,11 +75,13 @@ export default function MatchList({ initialMatches, loadError = false }: Props) 
     };
   }, []);
 
-  if (hasLoadError && matches.length === 0) {
+  const view = resolveMatchListView(matches.length, hasLoadError);
+
+  if (view === "error") {
     return <p className="text-center text-sm text-red-300">Could not load matches.</p>;
   }
 
-  if (matches.length === 0) {
+  if (view === "empty") {
     return (
       <div className="w-full space-y-6">
         <div className="flex justify-center">
